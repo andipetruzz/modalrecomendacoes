@@ -50,6 +50,8 @@
     .cat-tab { padding: 0.6rem 1rem; background: rgba(51, 65, 85, 0.5); border: 1px solid transparent; border-radius: 10px; color: #94a3b8; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; }
     .cat-tab:hover { background: rgba(51, 65, 85, 0.8); color: #e2e8f0; }
     .cat-tab.active { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .cat-tab.som-tab { font-size: 0.75rem; padding: 0.5rem 0.8rem; }
+    .cat-tab.som-tab.active { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
     .cat-tab .count { background: rgba(255,255,255,0.2); padding: 0.15rem 0.5rem; border-radius: 6px; margin-left: 0.5rem; font-size: 0.75rem; }
 
     .search-box { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
@@ -187,6 +189,8 @@
     let currentCategory = '';
     let searchTimeout = null;
     const CATEGORIES = ['Guitarristas','Bateristas','Tecladistas','Cantores','Baixistas','Produtores','DJs','Gamers'];
+    const SOM_CATEGORIES = ['Som: Graves Potentes','Som: Equilibrado','Som: Energético'];
+    const ALL_CATEGORIES = [...CATEGORIES, ...SOM_CATEGORIES];
 
     if (auth) {
       document.getElementById('loginOverlay').classList.add('hidden');
@@ -250,10 +254,24 @@
     }
 
     function renderCategoryTabs() {
-      document.getElementById('categoryTabs').innerHTML = CATEGORIES.map(cat => {
+      const mainTabs = CATEGORIES.map(cat => {
         const count = recommendations[cat]?.length || 0;
         return `<button class="cat-tab ${currentCategory === cat ? 'active' : ''}" onclick="selectCategory('${cat}')">${cat}<span class="count">${count}</span></button>`;
       }).join('');
+      
+      const somTabs = SOM_CATEGORIES.map(cat => {
+        const count = recommendations[cat]?.length || 0;
+        const label = cat.replace('Som: ', '');
+        return `<button class="cat-tab som-tab ${currentCategory === cat ? 'active' : ''}" onclick="selectCategory('${cat}')">${label}<span class="count">${count}</span></button>`;
+      }).join('');
+      
+      document.getElementById('categoryTabs').innerHTML = `
+        ${mainTabs}
+        <div style="width:100%;margin:0.5rem 0;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.1);">
+          <span style="font-size:0.7rem;color:#64748b;margin-right:0.5rem;">🎧 Estilo de Som:</span>
+          ${somTabs}
+        </div>
+      `;
     }
 
     function selectCategory(cat) {
@@ -375,3 +393,4 @@
   </script>
 </body>
 </html>
+
