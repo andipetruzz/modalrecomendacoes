@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KZ Recomendações</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+    
+    .login-overlay { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .login-box { background: #1e293b; padding: 2rem; border-radius: 12px; width: 300px; text-align: center; }
+    .login-box h1 { font-size: 1.25rem; margin-bottom: 1.5rem; }
+    .login-box input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: #e2e8f0; text-align: center; font-size: 1rem; }
+    .login-box button { width: 100%; padding: 0.75rem; background: #0ea5e9; border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; }
+    .login-error { color: #f87171; font-size: 0.875rem; margin-bottom: 1rem; }
+    .hidden { display: none !important; }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    header h1 { font-size: 1.4rem; color: #0ea5e9; }
+    .logout { padding: 0.5rem 1rem; background: #334155; border: none; border-radius: 6px; color: #e2e8f0; cursor: pointer; font-size: 0.85rem; }
+
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat { background: #1e293b; padding: 1rem; border-radius: 10px; text-align: center; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: #0ea5e9; }
+    .stat-label { font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem; }
+
+    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+    .section { background: #1e293b; border-radius: 12px; padding: 1.25rem; }
+    .section-title { font-size: 0.95rem; margin-bottom: 1rem; color: #94a3b8; }
+
+    .category-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .cat-tab { padding: 0.4rem 0.8rem; background: #334155; border: none; border-radius: 6px; color: #94a3b8; cursor: pointer; font-size: 0.75rem; }
+    .cat-tab.active { background: #10b981; color: white; }
+    .cat-tab .count { background: rgba(255,255,255,0.2); padding: 0.1rem 0.35rem; border-radius: 3px; margin-left: 0.25rem; font-size: 0.7rem; }
+
+    .search-box { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .search-box input { flex: 1; padding: 0.5rem; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: #e2e8f0; font-size: 0.85rem; }
+    .search-box button { padding: 0.5rem 1rem; background: #0ea5e9; border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 0.8rem; }
+
+    .list { max-height: 300px; overflow-y: auto; }
+    .item { display: flex; align-items: center; gap: 0.6rem; background: #0f172a; padding: 0.5rem; border-radius: 6px; margin-bottom: 0.4rem; }
+    .item img { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; background: #334155; }
+    .item .info { flex: 1; min-width: 0; }
+    .item .info h4 { font-size: 0.75rem; margin-bottom: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item .info span { color: #0ea5e9; font-size: 0.7rem; }
+    .item button { padding: 0.3rem 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.65rem; flex-shrink: 0; }
+    .btn-add { background: #10b981; color: white; }
+    .btn-remove { background: #ef4444; color: white; }
+    .btn-disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+
+    .selected-item { cursor: grab; }
+    .selected-item:active { cursor: grabbing; }
+    .selected-item.dragging { opacity: 0.5; }
+    .drag-handle { color: #64748b; font-size: 0.9rem; }
+
+    .empty { text-align: center; padding: 1.5rem; color: #64748b; font-size: 0.85rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th, td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #334155; }
+    th { color: #94a3b8; font-weight: 500; }
+    .badge { padding: 0.15rem 0.35rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; }
+    .badge-clicks { background: #0ea5e9; color: white; }
+    .badge-atc { background: #10b981; color: white; }
+  </style>
+</head>
+<body>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h1>🎧 KZ Recomendações</h1>
+      <div class="login-error hidden" id="loginError">Senha incorreta</div>
+      <input type="password" id="password" placeholder="Senha" onkeyup="if(event.key==='Enter')login()">
+      <button onclick="login()">Entrar</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1>🎧 KZ Recomendações</h1>
+      <button class="logout" onclick="logout()">Sair</button>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="statViews">-</div>
+        <div class="stat-label">Visualizações</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statClicks">-</div>
+        <div class="stat-label">Cliques</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statAtc">-</div>
+        <div class="stat-label">Add to Cart</div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <!-- Esquerda: Performance -->
+      <div class="section">
+        <h2 class="section-title">🏆 Performance por Produto</h2>
+        <table>
+          <thead><tr><th>Produto</th><th>Cliques</th><th>ATC</th><th>%</th></tr></thead>
+          <tbody id="productStats"><tr><td colspan="4" class="empty">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- Direita: Gerenciar -->
+      <div class="section">
+        <h2 class="section-title">⚙️ Gerenciar Recomendações</h2>
+        
+        <div class="category-tabs" id="categoryTabs"></div>
+
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:0.75rem;color:#64748b;margin-bottom:0.5rem;">Produtos na categoria (arraste p/ reordenar)</div>
+          <div class="list" id="selectedList">
+            <div class="empty">Selecione uma categoria</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Buscar produto..." onkeyup="if(event.key==='Enter')searchProducts()">
+            <button onclick="searchProducts()">Buscar</button>
+          </div>
+          <div class="list" id="searchResults">
+            <div class="empty">Digite para buscar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let auth = localStorage.getItem('kz_rec_auth') || '';
+    let recommendations = {};
+    let currentCategory = '';
+    const CATEGORIES = ['Guitarristas','Bateristas','Tecladistas','Cantores','Baixistas','Produtores','DJs','Gamers'];
+
+    if (auth) {
+      document.getElementById('loginOverlay').classList.add('hidden');
+      loadData();
+    }
+
+    async function login() {
+      const pass = document.getElementById('password').value;
+      auth = btoa(pass);
+      try {
+        const res = await fetch('/api/admin/admin?action=stats', { headers: { 'Authorization': `Basic ${auth}` }});
+        if (res.ok) {
+          localStorage.setItem('kz_rec_auth', auth);
+          document.getElementById('loginOverlay').classList.add('hidden');
+          loadData();
+        } else {
+          document.getElementById('loginError').classList.remove('hidden');
+        }
+      } catch { document.getElementById('loginError').classList.remove('hidden'); }
+    }
+
+    function logout() { localStorage.removeItem('kz_rec_auth'); location.reload(); }
+
+    async function api(action, options = {}) {
+      const res = await fetch(`/api/admin/admin?action=${action}`, {
+        ...options,
+        headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }
+      });
+      return res.json();
+    }
+
+    async function loadData() {
+      const [stats, recs] = await Promise.all([api('stats'), api('recommendations')]);
+      
+      document.getElementById('statViews').textContent = (stats.views || 0).toLocaleString();
+      document.getElementById('statClicks').textContent = (stats.clicks || 0).toLocaleString();
+      document.getElementById('statAtc').textContent = (stats.addToCart || 0).toLocaleString();
+
+      const tbody = document.getElementById('productStats');
+      if (stats.products?.length) {
+        tbody.innerHTML = stats.products.slice(0, 10).map(p => {
+          const rate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
+          return `<tr><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-clicks">${p.clicks}</span></td><td><span class="badge badge-atc">${p.addToCart}</span></td><td>${rate}%</td></tr>`;
+        }).join('');
+      } else {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty">Nenhum dado ainda</td></tr>';
+      }
+
+      recommendations = recs || {};
+      renderCategoryTabs();
+      if (!currentCategory) selectCategory(CATEGORIES[0]);
+    }
+
+    function renderCategoryTabs() {
+      document.getElementById('categoryTabs').innerHTML = CATEGORIES.map(cat => {
+        const count = recommendations[cat]?.length || 0;
+        return `<button class="cat-tab ${currentCategory === cat ? 'active' : ''}" onclick="selectCategory('${cat}')">${cat}<span class="count">${count}</span></button>`;
+      }).join('');
+    }
+
+    function selectCategory(cat) {
+      currentCategory = cat;
+      renderCategoryTabs();
+      renderSelected();
+    }
+
+    function renderSelected() {
+      const list = document.getElementById('selectedList');
+      const items = recommendations[currentCategory] || [];
+      
+      if (!items.length) {
+        list.innerHTML = '<div class="empty">Vazio - busque e adicione produtos</div>';
+        return;
+      }
+
+      list.innerHTML = items.map(p => `
+        <div class="item selected-item" draggable="true" data-handle="${p.handle}">
+          <span class="drag-handle">☰</span>
+          <img src="${p.image || 'https://placehold.co/40/1e293b/64748b?text=?'}" alt="">
+          <div class="info">
+            <h4>${p.name}</h4>
+            <span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span>
+          </div>
+          <button class="btn-remove" onclick="removeProduct('${p.handle}')">✕</button>
+        </div>
+      `).join('');
+
+      setupDragDrop();
+    }
+
+    function setupDragDrop() {
+      const items = document.querySelectorAll('.selected-item');
+      let draggedItem = null;
+      items.forEach(item => {
+        item.addEventListener('dragstart', () => { draggedItem = item; item.classList.add('dragging'); });
+        item.addEventListener('dragend', () => { item.classList.remove('dragging'); saveOrder(); });
+        item.addEventListener('dragover', e => {
+          e.preventDefault();
+          if (draggedItem && draggedItem !== item) {
+            const list = document.getElementById('selectedList');
+            const children = [...list.querySelectorAll('.selected-item')];
+            if (children.indexOf(draggedItem) < children.indexOf(item)) item.after(draggedItem);
+            else item.before(draggedItem);
+          }
+        });
+      });
+    }
+
+    async function saveOrder() {
+      const order = [...document.querySelectorAll('.selected-item')].map(i => i.dataset.handle);
+      const res = await api('reorder', { method: 'POST', body: JSON.stringify({ category: currentCategory, order }) });
+      if (res.success) recommendations = res.data;
+    }
+
+    async function searchProducts() {
+      const search = document.getElementById('searchInput').value.trim();
+      if (!search) return;
+      const container = document.getElementById('searchResults');
+      container.innerHTML = '<div class="empty">Buscando...</div>';
+
+      const data = await api(`products&search=${encodeURIComponent(search)}`);
+      if (!data.nodes?.length) {
+        container.innerHTML = '<div class="empty">Nenhum encontrado</div>';
+        return;
+      }
+
+      const selected = recommendations[currentCategory] || [];
+      container.innerHTML = data.nodes.map(p => {
+        const isSelected = selected.some(s => s.handle === p.handle);
+        const price = p.priceRangeV2?.minVariantPrice;
+        const variantId = p.variants?.nodes?.[0]?.id;
+        return `
+          <div class="item">
+            <img src="${p.featuredImage?.url || 'https://placehold.co/40/1e293b/64748b?text=?'}" alt="">
+            <div class="info">
+              <h4>${p.title}</h4>
+              <span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span>
+            </div>
+            ${isSelected 
+              ? '<button class="btn-disabled" disabled>✓</button>'
+              : `<button class="btn-add" onclick='addProduct(${JSON.stringify({
+                  title: p.title, handle: p.handle, image: p.featuredImage?.url,
+                  price: price?.amount, currency: price?.currencyCode, variantId
+                }).replace(/'/g, "&#39;")})'>+</button>`
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function addProduct(product) {
+      const res = await api('save', { method: 'POST', body: JSON.stringify({ category: currentCategory, product }) });
+      if (res.success) {
+        recommendations = res.data;
+        renderCategoryTabs();
+        renderSelected();
+        searchProducts();
+      }
+    }
+
+    async function removeProduct(handle) {
+      const res = await api(`remove&category=${currentCategory}&handle=${encodeURIComponent(handle)}`, { method: 'DELETE' });
+      if (res.success) {
+        recommendations = res.data;
+        renderCategoryTabs();
+        renderSelected();
+      }
+    }
+  </script>
+</body>
+</html>
