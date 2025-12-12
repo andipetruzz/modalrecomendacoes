@@ -24,12 +24,15 @@ async function shopifyGraphQL(query, variables = {}) {
   return res.json();
 }
 
-// Verifica auth (apenas senha)
 function checkAuth(req) {
   const auth = req.headers.get('authorization');
   if (!auth) return false;
-  const pass = Buffer.from(auth.split(' ')[1], 'base64').toString();
-  return pass === process.env.ADMIN_PASS;
+  try {
+    const pass = atob(auth.split(' ')[1]);
+    return pass === process.env.ADMIN_PASS;
+  } catch {
+    return false;
+  }
 }
 
 export default async function handler(req) {
