@@ -37,7 +37,9 @@ async function shopifyGraphQL(query, variables = {}) {
     },
     body: JSON.stringify({ query, variables }),
   });
-  return res.json();
+  const json = await res.json();
+  console.log('Shopify response:', JSON.stringify(json).slice(0, 500));
+  return json;
 }
 
 // Verifica auth (apenas senha)
@@ -83,7 +85,7 @@ export default async function handler(req) {
       });
     }
 
-    // GET ?action=products - Busca produtos da Shopify
+   // GET ?action=products - Busca produtos da Shopify
     if (action === 'products') {
       const search = url.searchParams.get('search') || '';
       const cursor = url.searchParams.get('cursor') || null;
@@ -104,13 +106,21 @@ export default async function handler(req) {
         }
       `;
       
-      const { data } = await shopifyGraphQL(query, {
+      const result = await shopifyGraphQL(query, {
         first: 20,
         query: search ? `title:*${search}*` : null,
         cursor,
       });
 
-      return new Response(JSON.stringify(data.products), {
+      if (result.errors) {
+        console.error('Shopify errors:', result.errors);
+        return new Response(JSON.stringify({ error: 'Shopify API error', details: result.errors }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      return new Response(JSON.stringify(result.data?.products || { nodes: [] }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
