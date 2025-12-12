@@ -23,13 +23,14 @@ try {
 // Categorias disponíveis
 const CATEGORIES = [
   'Guitarristas', 'Bateristas', 'Tecladistas', 'Cantores', 
-  'Baixistas', 'Produtores', 'DJs', 'Gamers'
+  'Baixistas', 'Produtores', 'DJs', 'Gamers',
+  'Som: Graves Potentes', 'Som: Equilibrado', 'Som: Energético'
 ];
 
 // Shopify GraphQL
 async function shopifyGraphQL(query, variables = {}) {
   console.log('Shopify GraphQL call to:', process.env.SHOPIFY_STORE);
-  const res = await fetch(`https://${process.env.SHOPIFY_STORE}/admin/api/2024-10/graphql.json`, {
+  const res = await fetch(`https://${process.env.SHOPIFY_STORE}/admin/api/2024-01/graphql.json`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -37,9 +38,7 @@ async function shopifyGraphQL(query, variables = {}) {
     },
     body: JSON.stringify({ query, variables }),
   });
-  const json = await res.json();
-  console.log('Shopify response:', JSON.stringify(json).slice(0, 500));
-  return json;
+  return res.json();
 }
 
 // Verifica auth (apenas senha)
@@ -92,7 +91,7 @@ export default async function handler(req) {
       
       const query = `
         query ($first: Int!, $query: String, $cursor: String) {
-          products(first: $first, query: $query, after: $cursor, sortKey: TITLE) {
+          products(first: $first, query: $query, after: $cursor) {
             pageInfo { hasNextPage, endCursor }
             nodes {
               id
@@ -106,21 +105,13 @@ export default async function handler(req) {
         }
       `;
       
-      const result = await shopifyGraphQL(query, {
+      const { data } = await shopifyGraphQL(query, {
         first: 20,
-        query: search ? search : null,
+        query: search ? `title:*${search}*` : null,
         cursor,
       });
 
-      if (result.errors) {
-        console.error('Shopify errors:', result.errors);
-        return new Response(JSON.stringify({ error: 'Shopify API error', details: result.errors }), {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-
-      return new Response(JSON.stringify(result.data?.products || { nodes: [] }), {
+      return new Response(JSON.stringify(data.products), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
@@ -199,21 +190,14 @@ export default async function handler(req) {
 
     // GET ?action=stats - Estatísticas
     if (action === 'stats') {
-      const results = await Promise.all([
-        redis.get('kz:stats:views'),
-        redis.get('kz:stats:clicks'),
-        redis.get('kz:stats:add_to_cart'),
-        redis.hgetall('kz:stats:product_clicks'),
-        redis.hgetall('kz:stats:product_atc'),
-        redis.hgetall('kz:stats:product_titles'),
+      const [views, clicks, addToCart, productClicks, productAtc, productTitles] = await Promise.all([
+        redis.get('kz:stats:views') || 0,
+        redis.get('kz:stats:clicks') || 0,
+        redis.get('kz:stats:add_to_cart') || 0,
+        redis.hgetall('kz:stats:product_clicks') || {},
+        redis.hgetall('kz:stats:product_atc') || {},
+        redis.hgetall('kz:stats:product_titles') || {},
       ]);
-
-      const views = results[0] || 0;
-      const clicks = results[1] || 0;
-      const addToCart = results[2] || 0;
-      const productClicks = results[3] || {};
-      const productAtc = results[4] || {};
-      const productTitles = results[5] || {};
 
       const products = Object.entries(productClicks).map(([handle, clickCount]) => ({
         handle,
