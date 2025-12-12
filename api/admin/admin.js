@@ -189,14 +189,21 @@ export default async function handler(req) {
 
     // GET ?action=stats - Estatísticas
     if (action === 'stats') {
-      const [views, clicks, addToCart, productClicks, productAtc, productTitles] = await Promise.all([
-        redis.get('kz:stats:views') || 0,
-        redis.get('kz:stats:clicks') || 0,
-        redis.get('kz:stats:add_to_cart') || 0,
-        redis.hgetall('kz:stats:product_clicks') || {},
-        redis.hgetall('kz:stats:product_atc') || {},
-        redis.hgetall('kz:stats:product_titles') || {},
+      const results = await Promise.all([
+        redis.get('kz:stats:views'),
+        redis.get('kz:stats:clicks'),
+        redis.get('kz:stats:add_to_cart'),
+        redis.hgetall('kz:stats:product_clicks'),
+        redis.hgetall('kz:stats:product_atc'),
+        redis.hgetall('kz:stats:product_titles'),
       ]);
+
+      const views = results[0] || 0;
+      const clicks = results[1] || 0;
+      const addToCart = results[2] || 0;
+      const productClicks = results[3] || {};
+      const productAtc = results[4] || {};
+      const productTitles = results[5] || {};
 
       const products = Object.entries(productClicks).map(([handle, clickCount]) => ({
         handle,
