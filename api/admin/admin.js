@@ -29,7 +29,7 @@ const CATEGORIES = [
 // Shopify GraphQL
 async function shopifyGraphQL(query, variables = {}) {
   console.log('Shopify GraphQL call to:', process.env.SHOPIFY_STORE);
-  const res = await fetch(`https://${process.env.SHOPIFY_STORE}/admin/api/2024-01/graphql.json`, {
+  const res = await fetch(`https://${process.env.SHOPIFY_STORE}/admin/api/2024-10/graphql.json`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -85,14 +85,14 @@ export default async function handler(req) {
       });
     }
 
-   // GET ?action=products - Busca produtos da Shopify
+    // GET ?action=products - Busca produtos da Shopify
     if (action === 'products') {
       const search = url.searchParams.get('search') || '';
       const cursor = url.searchParams.get('cursor') || null;
       
       const query = `
         query ($first: Int!, $query: String, $cursor: String) {
-          products(first: $first, query: $query, after: $cursor) {
+          products(first: $first, query: $query, after: $cursor, sortKey: TITLE) {
             pageInfo { hasNextPage, endCursor }
             nodes {
               id
@@ -108,7 +108,7 @@ export default async function handler(req) {
       
       const result = await shopifyGraphQL(query, {
         first: 20,
-        query: search ? `title:*${search}*` : null,
+        query: search ? search : null,
         cursor,
       });
 
