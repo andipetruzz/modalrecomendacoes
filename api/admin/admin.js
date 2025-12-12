@@ -1,9 +1,24 @@
 import { Redis } from '@upstash/redis';
 
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
+// DEBUG: Log env vars
+console.log('ENV CHECK:', {
+  hasKvUrl: !!process.env.KV_REST_API_URL,
+  hasKvToken: !!process.env.KV_REST_API_TOKEN,
+  hasShopifyStore: !!process.env.SHOPIFY_STORE,
+  hasShopifyToken: !!process.env.SHOPIFY_ADMIN_TOKEN,
+  hasAdminPass: !!process.env.ADMIN_PASS,
 });
+
+let redis;
+try {
+  redis = new Redis({
+    url: process.env.KV_REST_API_URL,
+    token: process.env.KV_REST_API_TOKEN,
+  });
+  console.log('Redis initialized successfully');
+} catch (e) {
+  console.error('Redis init error:', e.message);
+}
 
 // Categorias disponíveis
 const CATEGORIES = [
@@ -13,6 +28,7 @@ const CATEGORIES = [
 
 // Shopify GraphQL
 async function shopifyGraphQL(query, variables = {}) {
+  console.log('Shopify GraphQL call to:', process.env.SHOPIFY_STORE);
   const res = await fetch(`https://${process.env.SHOPIFY_STORE}/admin/api/2024-01/graphql.json`, {
     method: 'POST',
     headers: {
@@ -24,31 +40,40 @@ async function shopifyGraphQL(query, variables = {}) {
   return res.json();
 }
 
+// Verifica auth (apenas senha)
 function checkAuth(req) {
   const auth = req.headers.get('authorization');
+  console.log('Auth header present:', !!auth);
   if (!auth) return false;
   try {
     const pass = atob(auth.split(' ')[1]);
+    console.log('Password check:', pass === process.env.ADMIN_PASS);
     return pass === process.env.ADMIN_PASS;
-  } catch {
+  } catch (e) {
+    console.error('Auth decode error:', e.message);
     return false;
   }
 }
 
 export default async function handler(req) {
+  console.log('Request received:', req.method, req.url);
+  
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204 });
   }
 
   if (!checkAuth(req)) {
+    console.log('Auth failed - returning 401');
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json', 'WWW-Authenticate': 'Basic' },
     });
   }
 
+  console.log('Auth passed');
   const url = new URL(req.url);
   const action = url.searchParams.get('action');
+  console.log('Action:', action);
 
   try {
     // GET ?action=categories - Lista categorias disponíveis
@@ -191,7 +216,8 @@ export default async function handler(req) {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error('HANDLER ERROR:', error.message, error.stack);
+    return new Response(JSON.stringify({ error: error.message, stack: error.stack }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
