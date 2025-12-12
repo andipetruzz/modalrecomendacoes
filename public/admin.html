@@ -1,135 +1,181 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KZ Recomendações</title>
+  <title>KZ Recomendações - Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #e2e8f0; min-height: 100vh; }
     
-    .login-overlay { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 100; }
-    .login-box { background: #1e293b; padding: 2rem; border-radius: 12px; width: 300px; text-align: center; }
-    .login-box h1 { font-size: 1.25rem; margin-bottom: 1.5rem; }
-    .login-box input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #334155; border-radius: 8px; background: #0f172a; color: #e2e8f0; text-align: center; font-size: 1rem; }
-    .login-box button { width: 100%; padding: 0.75rem; background: #0ea5e9; border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; }
-    .login-error { color: #f87171; font-size: 0.875rem; margin-bottom: 1rem; }
+    .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .login-box { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); padding: 2.5rem; border-radius: 20px; width: 340px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .login-box .logo { font-size: 3rem; margin-bottom: 0.5rem; }
+    .login-box h1 { font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 700; background: linear-gradient(135deg, #0ea5e9, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .login-box p { font-size: 0.875rem; color: #94a3b8; margin-bottom: 1.5rem; }
+    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #e2e8f0; text-align: center; font-size: 1rem; transition: border-color 0.2s; }
+    .login-box input:focus { outline: none; border-color: #0ea5e9; }
+    .login-box button { width: 100%; padding: 1rem; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s; }
+    .login-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3); }
+    .login-error { color: #f87171; font-size: 0.875rem; margin-bottom: 1rem; padding: 0.75rem; background: rgba(248, 113, 113, 0.1); border-radius: 8px; }
     .hidden { display: none !important; }
 
-    .container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    header h1 { font-size: 1.4rem; color: #0ea5e9; }
-    .logout { padding: 0.5rem 1rem; background: #334155; border: none; border-radius: 6px; color: #e2e8f0; cursor: pointer; font-size: 0.85rem; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .header-left { display: flex; align-items: center; gap: 1rem; }
+    .header-left .logo { font-size: 2rem; }
+    header h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #0ea5e9, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .logout { padding: 0.75rem 1.5rem; background: rgba(51, 65, 85, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e2e8f0; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; }
+    .logout:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #f87171; }
 
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-    .stat { background: #1e293b; padding: 1rem; border-radius: 10px; text-align: center; }
-    .stat-value { font-size: 1.5rem; font-weight: 700; color: #0ea5e9; }
-    .stat-label { font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .stat { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: transform 0.2s, box-shadow 0.2s; }
+    .stat:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .stat-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .stat-value { font-size: 2.25rem; font-weight: 700; background: linear-gradient(135deg, #0ea5e9, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-label { font-size: 0.875rem; color: #94a3b8; margin-top: 0.25rem; font-weight: 500; }
 
-    .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+    .main-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; }
+    @media (max-width: 1000px) { .main-grid { grid-template-columns: 1fr; } }
 
-    .section { background: #1e293b; border-radius: 12px; padding: 1.25rem; }
-    .section-title { font-size: 0.95rem; margin-bottom: 1rem; color: #94a3b8; }
+    .section { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); border-radius: 20px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05); }
+    .section-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .section-icon { font-size: 1.5rem; }
+    .section-title { font-size: 1.1rem; font-weight: 600; color: #f1f5f9; }
 
-    .category-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
-    .cat-tab { padding: 0.4rem 0.8rem; background: #334155; border: none; border-radius: 6px; color: #94a3b8; cursor: pointer; font-size: 0.75rem; }
-    .cat-tab.active { background: #10b981; color: white; }
-    .cat-tab .count { background: rgba(255,255,255,0.2); padding: 0.1rem 0.35rem; border-radius: 3px; margin-left: 0.25rem; font-size: 0.7rem; }
+    .category-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .cat-tab { padding: 0.6rem 1rem; background: rgba(51, 65, 85, 0.5); border: 1px solid transparent; border-radius: 10px; color: #94a3b8; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; }
+    .cat-tab:hover { background: rgba(51, 65, 85, 0.8); color: #e2e8f0; }
+    .cat-tab.active { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .cat-tab .count { background: rgba(255,255,255,0.2); padding: 0.15rem 0.5rem; border-radius: 6px; margin-left: 0.5rem; font-size: 0.75rem; }
 
-    .search-box { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
-    .search-box input { flex: 1; padding: 0.5rem; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: #e2e8f0; font-size: 0.85rem; }
-    .search-box button { padding: 0.5rem 1rem; background: #0ea5e9; border: none; border-radius: 6px; color: white; cursor: pointer; font-size: 0.8rem; }
+    .search-box { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+    .search-box input { flex: 1; padding: 0.875rem 1rem; border: 2px solid #334155; border-radius: 12px; background: rgba(15, 23, 42, 0.8); color: #e2e8f0; font-size: 0.9rem; transition: border-color 0.2s; }
+    .search-box input:focus { outline: none; border-color: #0ea5e9; }
+    .search-box input::placeholder { color: #64748b; }
+    .search-box button { padding: 0.875rem 1.5rem; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; }
+    .search-box button:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(14, 165, 233, 0.3); }
 
-    .list { max-height: 300px; overflow-y: auto; }
-    .item { display: flex; align-items: center; gap: 0.6rem; background: #0f172a; padding: 0.5rem; border-radius: 6px; margin-bottom: 0.4rem; }
-    .item img { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; background: #334155; }
+    .list { max-height: 320px; overflow-y: auto; padding-right: 0.5rem; }
+    .list::-webkit-scrollbar { width: 6px; }
+    .list::-webkit-scrollbar-track { background: rgba(51, 65, 85, 0.3); border-radius: 3px; }
+    .list::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    .list-label { font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem; font-weight: 500; }
+
+    .item { display: flex; align-items: center; gap: 0.75rem; background: rgba(15, 23, 42, 0.6); padding: 0.75rem; border-radius: 12px; margin-bottom: 0.5rem; border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s; }
+    .item:hover { background: rgba(15, 23, 42, 0.9); border-color: rgba(255,255,255,0.1); }
+    .item img { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; background: #334155; }
     .item .info { flex: 1; min-width: 0; }
-    .item .info h4 { font-size: 0.75rem; margin-bottom: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .item .info span { color: #0ea5e9; font-size: 0.7rem; }
-    .item button { padding: 0.3rem 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.65rem; flex-shrink: 0; }
-    .btn-add { background: #10b981; color: white; }
-    .btn-remove { background: #ef4444; color: white; }
-    .btn-disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+    .item .info h4 { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #f1f5f9; }
+    .item .info span { color: #22d3ee; font-size: 0.8rem; font-weight: 500; }
+    .item button { padding: 0.5rem 0.75rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600; flex-shrink: 0; transition: all 0.2s; }
+    .btn-add { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .btn-add:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
+    .btn-remove { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .btn-remove:hover { background: #ef4444; color: white; }
+    .btn-disabled { background: rgba(51, 65, 85, 0.5); color: #64748b; cursor: not-allowed; }
 
     .selected-item { cursor: grab; }
     .selected-item:active { cursor: grabbing; }
     .selected-item.dragging { opacity: 0.5; }
-    .drag-handle { color: #64748b; font-size: 0.9rem; }
+    .drag-handle { color: #64748b; font-size: 1.1rem; cursor: grab; }
 
-    .empty { text-align: center; padding: 1.5rem; color: #64748b; font-size: 0.85rem; }
+    .empty { text-align: center; padding: 2rem; color: #64748b; font-size: 0.9rem; }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.5; }
 
-    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-    th, td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #334155; }
-    th { color: #94a3b8; font-weight: 500; }
-    .badge { padding: 0.15rem 0.35rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; }
-    .badge-clicks { background: #0ea5e9; color: white; }
-    .badge-atc { background: #10b981; color: white; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th, td { padding: 0.875rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    th { color: #64748b; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    tbody tr { transition: background 0.2s; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .badge-clicks { background: rgba(14, 165, 233, 0.2); color: #22d3ee; }
+    .badge-atc { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-rate { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+
+    .refresh-btn { background: none; border: none; color: #64748b; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: all 0.2s; margin-left: auto; font-size: 1.2rem; }
+    .refresh-btn:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
   </style>
 </head>
 <body>
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-      <h1>🎧 KZ Recomendações</h1>
+      <div class="logo">🎧</div>
+      <h1>KZ Recomendações</h1>
+      <p>Painel de administração</p>
       <div class="login-error hidden" id="loginError">Senha incorreta</div>
-      <input type="password" id="password" placeholder="Senha" onkeyup="if(event.key==='Enter')login()">
+      <input type="password" id="password" placeholder="Digite a senha" onkeyup="if(event.key==='Enter')login()">
       <button onclick="login()">Entrar</button>
     </div>
   </div>
 
-  <div class="container">
+  <div class="container hidden" id="mainContent">
     <header>
-      <h1>🎧 KZ Recomendações</h1>
+      <div class="header-left">
+        <span class="logo">🎧</span>
+        <h1>KZ Recomendações</h1>
+      </div>
       <button class="logout" onclick="logout()">Sair</button>
     </header>
 
-    <!-- Stats -->
     <div class="stats">
       <div class="stat">
-        <div class="stat-value" id="statViews">-</div>
+        <div class="stat-icon">👁️</div>
+        <div class="stat-value" id="statViews">0</div>
         <div class="stat-label">Visualizações</div>
       </div>
       <div class="stat">
-        <div class="stat-value" id="statClicks">-</div>
+        <div class="stat-icon">👆</div>
+        <div class="stat-value" id="statClicks">0</div>
         <div class="stat-label">Cliques</div>
       </div>
       <div class="stat">
-        <div class="stat-value" id="statAtc">-</div>
+        <div class="stat-icon">🛒</div>
+        <div class="stat-value" id="statAtc">0</div>
         <div class="stat-label">Add to Cart</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value" id="statRate">0%</div>
+        <div class="stat-label">Conversão</div>
       </div>
     </div>
 
     <div class="main-grid">
-      <!-- Esquerda: Performance -->
       <div class="section">
-        <h2 class="section-title">🏆 Performance por Produto</h2>
+        <div class="section-header">
+          <span class="section-icon">🏆</span>
+          <h2 class="section-title">Performance por Produto</h2>
+          <button class="refresh-btn" onclick="loadData()" title="Atualizar">🔄</button>
+        </div>
         <table>
-          <thead><tr><th>Produto</th><th>Cliques</th><th>ATC</th><th>%</th></tr></thead>
-          <tbody id="productStats"><tr><td colspan="4" class="empty">Carregando...</td></tr></tbody>
+          <thead><tr><th>Produto</th><th>Cliques</th><th>Cart</th><th>Taxa</th></tr></thead>
+          <tbody id="productStats"><tr><td colspan="4" class="empty"><div class="empty-icon">📊</div>Nenhum dado ainda</td></tr></tbody>
         </table>
       </div>
 
-      <!-- Direita: Gerenciar -->
       <div class="section">
-        <h2 class="section-title">⚙️ Gerenciar Recomendações</h2>
+        <div class="section-header">
+          <span class="section-icon">⚙️</span>
+          <h2 class="section-title">Gerenciar Recomendações</h2>
+        </div>
         
         <div class="category-tabs" id="categoryTabs"></div>
 
-        <div style="margin-bottom:1rem;">
-          <div style="font-size:0.75rem;color:#64748b;margin-bottom:0.5rem;">Produtos na categoria (arraste p/ reordenar)</div>
-          <div class="list" id="selectedList">
-            <div class="empty">Selecione uma categoria</div>
-          </div>
+        <div style="margin-bottom:1.5rem;">
+          <div class="list-label">📦 Produtos na categoria (arraste para reordenar)</div>
+          <div class="list" id="selectedList"><div class="empty"><div class="empty-icon">📦</div>Selecione uma categoria</div></div>
         </div>
 
         <div>
           <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Buscar produto (ex: zsn, as16, castor)..." oninput="debounceSearch()">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar produto..." oninput="debounceSearch()">
             <button onclick="searchProducts()">Buscar</button>
           </div>
-          <div class="list" id="searchResults">
-            <div class="empty">Produtos da loja aparecerão aqui</div>
-          </div>
+          <div class="list" id="searchResults"><div class="empty"><div class="empty-icon">🔍</div>Produtos aparecerão aqui</div></div>
         </div>
       </div>
     </div>
@@ -144,6 +190,7 @@
 
     if (auth) {
       document.getElementById('loginOverlay').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
       loadData();
     }
 
@@ -155,6 +202,7 @@
         if (res.ok) {
           localStorage.setItem('kz_rec_auth', auth);
           document.getElementById('loginOverlay').classList.add('hidden');
+          document.getElementById('mainContent').classList.remove('hidden');
           loadData();
         } else {
           document.getElementById('loginError').classList.remove('hidden');
@@ -175,25 +223,29 @@
     async function loadData() {
       const [stats, recs] = await Promise.all([api('stats'), api('recommendations')]);
       
-      document.getElementById('statViews').textContent = (stats.views || 0).toLocaleString();
-      document.getElementById('statClicks').textContent = (stats.clicks || 0).toLocaleString();
-      document.getElementById('statAtc').textContent = (stats.addToCart || 0).toLocaleString();
+      const views = stats.views || 0;
+      const clicks = stats.clicks || 0;
+      const atc = stats.addToCart || 0;
+      const rate = clicks > 0 ? ((atc / clicks) * 100).toFixed(1) : '0';
+      
+      document.getElementById('statViews').textContent = views.toLocaleString();
+      document.getElementById('statClicks').textContent = clicks.toLocaleString();
+      document.getElementById('statAtc').textContent = atc.toLocaleString();
+      document.getElementById('statRate').textContent = rate + '%';
 
       const tbody = document.getElementById('productStats');
       if (stats.products?.length) {
         tbody.innerHTML = stats.products.slice(0, 10).map(p => {
-          const rate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
-          return `<tr><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-clicks">${p.clicks}</span></td><td><span class="badge badge-atc">${p.addToCart}</span></td><td>${rate}%</td></tr>`;
+          const pRate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
+          return `<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${p.title}">${p.title}</td><td><span class="badge badge-clicks">${p.clicks}</span></td><td><span class="badge badge-atc">${p.addToCart}</span></td><td><span class="badge badge-rate">${pRate}%</span></td></tr>`;
         }).join('');
       } else {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty">Nenhum dado ainda</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="empty"><div class="empty-icon">📊</div>Nenhum dado ainda</td></tr>';
       }
 
       recommendations = recs || {};
       renderCategoryTabs();
       if (!currentCategory) selectCategory(CATEGORIES[0]);
-      
-      // Carrega produtos iniciais
       loadInitialProducts();
     }
 
@@ -215,22 +267,18 @@
       const items = recommendations[currentCategory] || [];
       
       if (!items.length) {
-        list.innerHTML = '<div class="empty">Vazio - busque e adicione produtos</div>';
+        list.innerHTML = '<div class="empty"><div class="empty-icon">📦</div>Vazio - busque e adicione produtos</div>';
         return;
       }
 
       list.innerHTML = items.map(p => `
         <div class="item selected-item" draggable="true" data-handle="${p.handle}">
           <span class="drag-handle">☰</span>
-          <img src="${p.image || 'https://placehold.co/40/1e293b/64748b?text=?'}" alt="">
-          <div class="info">
-            <h4>${p.name}</h4>
-            <span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span>
-          </div>
-          <button class="btn-remove" onclick="removeProduct('${p.handle}')">✕</button>
+          <img src="${p.image || 'https://placehold.co/48/1e293b/64748b?text=?'}" alt="">
+          <div class="info"><h4>${p.name}</h4><span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span></div>
+          <button class="btn-remove" onclick="removeProduct('${p.handle}')">✕ Remover</button>
         </div>
       `).join('');
-
       setupDragDrop();
     }
 
@@ -258,66 +306,48 @@
       if (res.success) recommendations = res.data;
     }
 
-    // Carrega produtos iniciais (sem busca)
     async function loadInitialProducts() {
       const container = document.getElementById('searchResults');
-      container.innerHTML = '<div class="empty">Carregando produtos...</div>';
-      
+      container.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div>Carregando...</div>';
       const data = await api('products&search=');
       if (!data.nodes?.length) {
-        container.innerHTML = '<div class="empty">Nenhum produto encontrado</div>';
+        container.innerHTML = '<div class="empty"><div class="empty-icon">📦</div>Nenhum produto</div>';
         return;
       }
-      
       renderProductList(data.nodes);
     }
 
-    // Debounce para busca automática
     function debounceSearch() {
       clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        searchProducts();
-      }, 300);
+      searchTimeout = setTimeout(() => searchProducts(), 300);
     }
 
     async function searchProducts() {
       const search = document.getElementById('searchInput').value.trim();
       const container = document.getElementById('searchResults');
-      container.innerHTML = '<div class="empty">Buscando...</div>';
-
+      container.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div>Buscando...</div>';
       const data = await api(`products&search=${encodeURIComponent(search)}`);
       if (!data.nodes?.length) {
-        container.innerHTML = '<div class="empty">Nenhum encontrado</div>';
+        container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div>Nenhum encontrado</div>';
         return;
       }
-
       renderProductList(data.nodes);
     }
 
     function renderProductList(products) {
       const container = document.getElementById('searchResults');
       const selected = recommendations[currentCategory] || [];
-      
       container.innerHTML = products.map(p => {
         const isSelected = selected.some(s => s.handle === p.handle);
         const price = p.priceRangeV2?.minVariantPrice;
         const variantId = p.variants?.nodes?.[0]?.id;
-        return `
-          <div class="item">
-            <img src="${p.featuredImage?.url || 'https://placehold.co/40/1e293b/64748b?text=?'}" alt="">
-            <div class="info">
-              <h4>${p.title}</h4>
-              <span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span>
-            </div>
-            ${isSelected 
-              ? '<button class="btn-disabled" disabled>✓</button>'
-              : `<button class="btn-add" onclick='addProduct(${JSON.stringify({
-                  title: p.title, handle: p.handle, image: p.featuredImage?.url,
-                  price: price?.amount, currency: price?.currencyCode, variantId
-                }).replace(/'/g, "&#39;")})'>+</button>`
-            }
-          </div>
-        `;
+        return `<div class="item">
+          <img src="${p.featuredImage?.url || 'https://placehold.co/48/1e293b/64748b?text=?'}" alt="">
+          <div class="info"><h4>${p.title}</h4><span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span></div>
+          ${isSelected 
+            ? '<button class="btn-disabled" disabled>✓ Adicionado</button>'
+            : `<button class="btn-add" onclick='addProduct(${JSON.stringify({title: p.title, handle: p.handle, image: p.featuredImage?.url, price: price?.amount, currency: price?.currencyCode, variantId}).replace(/'/g, "&#39;")})'>+ Adicionar</button>`}
+        </div>`;
       }).join('');
     }
 
@@ -327,10 +357,8 @@
         recommendations = res.data;
         renderCategoryTabs();
         renderSelected();
-        // Atualiza lista de busca para mostrar checkmark
         const search = document.getElementById('searchInput').value.trim();
-        if (search) searchProducts();
-        else loadInitialProducts();
+        search ? searchProducts() : loadInitialProducts();
       }
     }
 
@@ -340,10 +368,8 @@
         recommendations = res.data;
         renderCategoryTabs();
         renderSelected();
-        // Atualiza lista de busca para remover checkmark
         const search = document.getElementById('searchInput').value.trim();
-        if (search) searchProducts();
-        else loadInitialProducts();
+        search ? searchProducts() : loadInitialProducts();
       }
     }
   </script>
