@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -125,11 +124,11 @@
 
         <div>
           <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Buscar produto..." onkeyup="if(event.key==='Enter')searchProducts()">
+            <input type="text" id="searchInput" placeholder="Buscar produto (ex: zsn, as16, castor)..." oninput="debounceSearch()">
             <button onclick="searchProducts()">Buscar</button>
           </div>
           <div class="list" id="searchResults">
-            <div class="empty">Digite para buscar</div>
+            <div class="empty">Produtos da loja aparecerão aqui</div>
           </div>
         </div>
       </div>
@@ -140,6 +139,7 @@
     let auth = localStorage.getItem('kz_rec_auth') || '';
     let recommendations = {};
     let currentCategory = '';
+    let searchTimeout = null;
     const CATEGORIES = ['Guitarristas','Bateristas','Tecladistas','Cantores','Baixistas','Produtores','DJs','Gamers'];
 
     if (auth) {
@@ -192,6 +192,9 @@
       recommendations = recs || {};
       renderCategoryTabs();
       if (!currentCategory) selectCategory(CATEGORIES[0]);
+      
+      // Carrega produtos iniciais
+      loadInitialProducts();
     }
 
     function renderCategoryTabs() {
@@ -255,9 +258,30 @@
       if (res.success) recommendations = res.data;
     }
 
+    // Carrega produtos iniciais (sem busca)
+    async function loadInitialProducts() {
+      const container = document.getElementById('searchResults');
+      container.innerHTML = '<div class="empty">Carregando produtos...</div>';
+      
+      const data = await api('products&search=');
+      if (!data.nodes?.length) {
+        container.innerHTML = '<div class="empty">Nenhum produto encontrado</div>';
+        return;
+      }
+      
+      renderProductList(data.nodes);
+    }
+
+    // Debounce para busca automática
+    function debounceSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchProducts();
+      }, 300);
+    }
+
     async function searchProducts() {
       const search = document.getElementById('searchInput').value.trim();
-      if (!search) return;
       const container = document.getElementById('searchResults');
       container.innerHTML = '<div class="empty">Buscando...</div>';
 
@@ -267,8 +291,14 @@
         return;
       }
 
+      renderProductList(data.nodes);
+    }
+
+    function renderProductList(products) {
+      const container = document.getElementById('searchResults');
       const selected = recommendations[currentCategory] || [];
-      container.innerHTML = data.nodes.map(p => {
+      
+      container.innerHTML = products.map(p => {
         const isSelected = selected.some(s => s.handle === p.handle);
         const price = p.priceRangeV2?.minVariantPrice;
         const variantId = p.variants?.nodes?.[0]?.id;
@@ -297,7 +327,10 @@
         recommendations = res.data;
         renderCategoryTabs();
         renderSelected();
-        searchProducts();
+        // Atualiza lista de busca para mostrar checkmark
+        const search = document.getElementById('searchInput').value.trim();
+        if (search) searchProducts();
+        else loadInitialProducts();
       }
     }
 
@@ -307,6 +340,10 @@
         recommendations = res.data;
         renderCategoryTabs();
         renderSelected();
+        // Atualiza lista de busca para remover checkmark
+        const search = document.getElementById('searchInput').value.trim();
+        if (search) searchProducts();
+        else loadInitialProducts();
       }
     }
   </script>
