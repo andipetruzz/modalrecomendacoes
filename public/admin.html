@@ -373,14 +373,24 @@
     };
 
     const QUIZ_GROUPS = {
-      'retorno': { label: 'Retorno de Palco', icon: '🎤', subcats: [] },
-      'casual': { label: 'Uso Casual', icon: '🎵', subcats: [] },
-      'mixagem': { label: 'Mixagem e Produção', icon: '🎛️', subcats: [] },
-      'audiovisual': { label: 'Audiovisual', icon: '🎬', subcats: [] },
-      'games': { label: 'Games', icon: '🎮', subcats: [] }
+      br: {
+        'retorno': { label: 'Retorno de Palco', icon: '🎤' },
+        'casual': { label: 'Uso Casual', icon: '🎵' },
+        'mixagem': { label: 'Mixagem e Produção', icon: '🎛️' },
+        'audiovisual': { label: 'Audiovisual', icon: '🎬' },
+        'games': { label: 'Games', icon: '🎮' }
+      },
+      global: {
+        'stage': { label: 'Stage Monitoring', icon: '🎤' },
+        'casual': { label: 'Casual Use', icon: '🎵' },
+        'mixing': { label: 'Mixing & Production', icon: '🎛️' },
+        'audiovisual': { label: 'Audiovisual', icon: '🎬' },
+        'games': { label: 'Games', icon: '🎮' }
+      }
     };
 
     const QUIZ_SUBCAT_LABELS = {
+      // BR
       'guitarra-masculino': '🎸 Guitarra (M)', 'guitarra-feminino': '🎸 Guitarra (F)',
       'baixo-masculino': '🎸 Baixo (M)', 'baixo-feminino': '🎸 Baixo (F)',
       'bateria-masculino': '🥁 Bateria (M)', 'bateria-feminino': '🥁 Bateria (F)',
@@ -391,20 +401,44 @@
       'eletronica': '🎛️ Eletrônica', 'rock': '🤘 Rock/Metal', 'hiphop': '🎤 Hip Hop',
       'classica': '🎻 Clássica', 'pop': '🎵 Pop/MPB', 'gospel': '🙏 Gospel', 'diversos': '🎶 Diversos',
       'edicao': '✂️ Edição', 'streaming': '📡 Streaming', 'cinema': '🎥 Cinema', 'animacao': '🎨 Animação',
-      'fps': '🎯 FPS/Competitivo', 'rpg': '⚔️ RPG/Aventura', 'moba': '🏰 MOBA/Estratégia', 'casual': '🎮 Casual'
+      'fps': '🎯 FPS/Competitivo', 'rpg': '⚔️ RPG/Aventura', 'moba': '🏰 MOBA/Estratégia', 'casual': '🎮 Casual',
+      // Global
+      'guitar-male': '🎸 Guitar (M)', 'guitar-female': '🎸 Guitar (F)',
+      'bass-male': '🎸 Bass (M)', 'bass-female': '🎸 Bass (F)',
+      'drums-male': '🥁 Drums (M)', 'drums-female': '🥁 Drums (F)',
+      'keyboard-male': '🎹 Keyboard (M)', 'keyboard-female': '🎹 Keyboard (F)',
+      'vocal-male': '🎤 Vocal (M)', 'vocal-female': '🎤 Vocal (F)',
+      'other-male': '🎶 Other (M)', 'other-female': '🎶 Other (F)',
+      'balanced': '⚖️ Balanced', 'bass': '🔊 Deep Bass', 'energetic': '⚡ Energetic',
+      'electronic': '🎛️ Electronic', 'rock': '🤘 Rock/Metal', 'hiphop': '🎤 Hip Hop',
+      'classical': '🎻 Classical', 'pop': '🎵 Pop', 'gospel': '🙏 Gospel', 'various': '🎶 Various',
+      'editing': '✂️ Editing', 'streaming': '📡 Streaming', 'cinema': '🎥 Cinema', 'animation': '🎨 Animation'
     };
 
-    const QUIZ_CATEGORIES = [
-      'retorno-guitarra-masculino', 'retorno-baixo-masculino', 'retorno-bateria-masculino',
-      'retorno-teclado-masculino', 'retorno-vocal-masculino', 'retorno-outros-masculino',
-      'retorno-guitarra-feminino', 'retorno-baixo-feminino', 'retorno-bateria-feminino',
-      'retorno-teclado-feminino', 'retorno-vocal-feminino', 'retorno-outros-feminino',
-      'casual-equilibrado', 'casual-graves', 'casual-energetico',
-      'mixagem-eletronica', 'mixagem-rock', 'mixagem-hiphop', 'mixagem-classica',
-      'mixagem-pop', 'mixagem-gospel', 'mixagem-diversos',
-      'audiovisual-edicao', 'audiovisual-streaming', 'audiovisual-cinema', 'audiovisual-animacao',
-      'games-fps', 'games-rpg', 'games-moba', 'games-casual'
-    ];
+    const QUIZ_CATEGORIES = {
+      br: [
+        'retorno-guitarra-masculino', 'retorno-baixo-masculino', 'retorno-bateria-masculino',
+        'retorno-teclado-masculino', 'retorno-vocal-masculino', 'retorno-outros-masculino',
+        'retorno-guitarra-feminino', 'retorno-baixo-feminino', 'retorno-bateria-feminino',
+        'retorno-teclado-feminino', 'retorno-vocal-feminino', 'retorno-outros-feminino',
+        'casual-equilibrado', 'casual-graves', 'casual-energetico',
+        'mixagem-eletronica', 'mixagem-rock', 'mixagem-hiphop', 'mixagem-classica',
+        'mixagem-pop', 'mixagem-gospel', 'mixagem-diversos',
+        'audiovisual-edicao', 'audiovisual-streaming', 'audiovisual-cinema', 'audiovisual-animacao',
+        'games-fps', 'games-rpg', 'games-moba', 'games-casual'
+      ],
+      global: [
+        'stage-guitar-male', 'stage-bass-male', 'stage-drums-male',
+        'stage-keyboard-male', 'stage-vocal-male', 'stage-other-male',
+        'stage-guitar-female', 'stage-bass-female', 'stage-drums-female',
+        'stage-keyboard-female', 'stage-vocal-female', 'stage-other-female',
+        'casual-balanced', 'casual-bass', 'casual-energetic',
+        'mixing-electronic', 'mixing-rock', 'mixing-hiphop', 'mixing-classical',
+        'mixing-pop', 'mixing-gospel', 'mixing-various',
+        'audiovisual-editing', 'audiovisual-streaming', 'audiovisual-cinema', 'audiovisual-animation',
+        'games-fps', 'games-rpg', 'games-moba', 'games-casual'
+      ]
+    };
 
     const STORE_CATEGORIES = {
       br: ['Guitarristas', 'Bateristas', 'Tecladistas', 'Cantores', 'Baixistas', 'Produtores', 'DJs', 'Gamers', 'Som: Graves Potentes', 'Som: Equilibrado', 'Som: Energético'],
@@ -552,9 +586,14 @@
 
     // Quiz Groups
     function renderQuizGroups() {
-      // Build groups from categories
-      const groups = { retorno: [], casual: [], mixagem: [], audiovisual: [], games: [] };
-      QUIZ_CATEGORIES.forEach(cat => {
+      // Build groups from categories based on current store
+      const categories = QUIZ_CATEGORIES[currentStore] || QUIZ_CATEGORIES.br;
+      const groupsConfig = QUIZ_GROUPS[currentStore] || QUIZ_GROUPS.br;
+      
+      const groups = {};
+      Object.keys(groupsConfig).forEach(g => groups[g] = []);
+      
+      categories.forEach(cat => {
         const parts = cat.split('-');
         const group = parts[0];
         if (groups[group]) groups[group].push(cat);
@@ -562,7 +601,8 @@
 
       const container = document.getElementById('quizGroupsContainer');
       container.innerHTML = Object.entries(groups).map(([groupId, cats]) => {
-        const groupInfo = QUIZ_GROUPS[groupId];
+        const groupInfo = groupsConfig[groupId];
+        if (!groupInfo) return '';
         const totalProducts = cats.reduce((sum, cat) => sum + (quizData[cat]?.length || 0), 0);
         const isExpanded = expandedGroups[groupId];
         
@@ -611,8 +651,9 @@
       const parts = cat.split('-');
       const subKey = parts.slice(1).join('-');
       const label = QUIZ_SUBCAT_LABELS[subKey] || cat;
-      document.getElementById('quizEditorIcon').textContent = QUIZ_GROUPS[parts[0]]?.icon || '📦';
-      document.getElementById('quizEditorTitle').textContent = `${QUIZ_GROUPS[parts[0]]?.label} › ${label.replace(/^[^\s]+\s/, '')}`;
+      const groupsConfig = QUIZ_GROUPS[currentStore] || QUIZ_GROUPS.br;
+      document.getElementById('quizEditorIcon').textContent = groupsConfig[parts[0]]?.icon || '📦';
+      document.getElementById('quizEditorTitle').textContent = `${groupsConfig[parts[0]]?.label || parts[0]} › ${label.replace(/^[^\s]+\s/, '')}`;
       renderQuizProducts();
       loadSearchResults('quiz');
     }
