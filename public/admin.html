@@ -4,309 +4,425 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KZ Admin - Recomendações & Quiz</title>
+  <title>KZ Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
     
-    .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); display: flex; align-items: center; justify-content: center; z-index: 100; }
-    .login-box { background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(20px); padding: 2.5rem; border-radius: 20px; width: 340px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    /* Login */
+    .login-overlay { position: fixed; inset: 0; background: #0f172a; display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .login-box { background: #1e293b; padding: 2.5rem; border-radius: 20px; width: 340px; text-align: center; border: 1px solid #334155; }
     .login-box .logo { font-size: 3rem; margin-bottom: 0.5rem; }
-    .login-box h1 { font-size: 1.5rem; margin-bottom: 0.5rem; font-weight: 700; background: linear-gradient(135deg, #0ea5e9, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .login-box p { font-size: 0.875rem; color: #94a3b8; margin-bottom: 1.5rem; }
-    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #e2e8f0; text-align: center; font-size: 1rem; transition: border-color 0.2s; }
+    .login-box h1 { font-size: 1.5rem; margin-bottom: 1.5rem; color: #f1f5f9; }
+    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #e2e8f0; text-align: center; font-size: 1rem; }
     .login-box input:focus { outline: none; border-color: #0ea5e9; }
-    .login-box button { width: 100%; padding: 1rem; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s; }
-    .login-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3); }
+    .login-box button { width: 100%; padding: 1rem; background: #0ea5e9; border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; }
+    .login-box button:hover { background: #0284c7; }
     .login-error { color: #f87171; font-size: 0.875rem; margin-bottom: 1rem; padding: 0.75rem; background: rgba(248, 113, 113, 0.1); border-radius: 8px; }
     .hidden { display: none !important; }
 
-    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 1rem; }
-    .header-left { display: flex; align-items: center; gap: 1rem; }
-    .header-left .logo { font-size: 2rem; }
-    header h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #0ea5e9, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .header-right { display: flex; align-items: center; gap: 1rem; }
-    .store-selector { display: flex; gap: 0.5rem; background: rgba(51, 65, 85, 0.5); padding: 0.25rem; border-radius: 10px; }
-    .store-btn { padding: 0.6rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem; font-weight: 600; transition: all 0.2s; background: transparent; color: #94a3b8; }
-    .store-btn:hover { color: #e2e8f0; }
-    .store-btn.active { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-    .store-btn.active.global { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-    .store-btn .flag { margin-right: 0.4rem; }
-    .logout { padding: 0.75rem 1.5rem; background: rgba(51, 65, 85, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e2e8f0; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; }
-    .logout:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #f87171; }
+    /* Layout Principal */
+    .app { display: flex; min-height: 100vh; }
+    
+    /* Sidebar */
+    .sidebar { width: 260px; background: #1e293b; border-right: 1px solid #334155; padding: 1.5rem; display: flex; flex-direction: column; }
+    .sidebar-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #334155; }
+    .sidebar-header .logo { font-size: 1.75rem; }
+    .sidebar-header h1 { font-size: 1.25rem; font-weight: 700; color: #f1f5f9; }
+    
+    .store-switch { display: flex; background: #0f172a; border-radius: 10px; padding: 4px; margin-bottom: 1.5rem; }
+    .store-switch button { flex: 1; padding: 0.6rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600; background: transparent; color: #64748b; transition: all 0.2s; }
+    .store-switch button.active { background: #10b981; color: white; }
+    .store-switch button.active.global { background: #8b5cf6; }
+    
+    .nav-section { margin-bottom: 1.5rem; }
+    .nav-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.75rem; font-weight: 600; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: #94a3b8; font-weight: 500; margin-bottom: 0.25rem; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+    .nav-item.active { background: #0ea5e9; color: white; }
+    .nav-item.active.quiz { background: #f59e0b; }
+    .nav-item .icon { font-size: 1.25rem; }
+    .nav-item .badge { margin-left: auto; background: rgba(255,255,255,0.2); padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; }
+    
+    .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid #334155; }
+    .logout-btn { width: 100%; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; color: #f87171; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
+    .logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
 
-    /* Tab Navigation */
-    .tab-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: rgba(51, 65, 85, 0.3); padding: 0.5rem; border-radius: 12px; }
-    .tab-btn { flex: 1; padding: 1rem; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.2s; background: transparent; color: #94a3b8; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-    .tab-btn:hover { color: #e2e8f0; background: rgba(255,255,255,0.05); }
-    .tab-btn.active { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; }
-    .tab-btn.quiz.active { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-    .stat { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.25rem; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.05); transition: transform 0.2s, box-shadow 0.2s; }
-    .stat:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-    .stat-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .stat-value { font-size: 1.75rem; font-weight: 700; background: linear-gradient(135deg, #0ea5e9, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .stat.quiz .stat-value { background: linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip: text; background-clip: text; }
-    .stat-label { font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem; font-weight: 500; }
-
-    .main-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 1.5rem; }
-    @media (max-width: 1000px) { .main-grid { grid-template-columns: 1fr; } }
-
-    .section { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); border-radius: 20px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.05); }
-    .section-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .section-icon { font-size: 1.5rem; }
-    .section-title { font-size: 1.1rem; font-weight: 600; color: #f1f5f9; }
-
-    .category-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .cat-tab { padding: 0.6rem 1rem; background: rgba(51, 65, 85, 0.5); border: 1px solid transparent; border-radius: 10px; color: #94a3b8; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; }
-    .cat-tab:hover { background: rgba(51, 65, 85, 0.8); color: #e2e8f0; }
-    .cat-tab.active { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-    .cat-tab.som-tab { font-size: 0.75rem; padding: 0.5rem 0.8rem; }
-    .cat-tab.som-tab.active { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-    .cat-tab .count { background: rgba(255,255,255,0.2); padding: 0.15rem 0.5rem; border-radius: 6px; margin-left: 0.5rem; font-size: 0.75rem; }
-
-    /* Quiz category selector */
-    .quiz-cat-select { width: 100%; padding: 0.875rem 1rem; border: 2px solid #334155; border-radius: 12px; background: rgba(15, 23, 42, 0.8); color: #e2e8f0; font-size: 0.9rem; margin-bottom: 1rem; cursor: pointer; }
-    .quiz-cat-select:focus { outline: none; border-color: #f59e0b; }
-    .quiz-cat-select option { background: #1e293b; color: #e2e8f0; }
-    .quiz-group-label { font-weight: 700; color: #f59e0b; }
-
-    .search-box { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
-    .search-box input { flex: 1; padding: 0.875rem 1rem; border: 2px solid #334155; border-radius: 12px; background: rgba(15, 23, 42, 0.8); color: #e2e8f0; font-size: 0.9rem; transition: border-color 0.2s; }
+    /* Main Content */
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .main-header { padding: 1.5rem 2rem; border-bottom: 1px solid #334155; background: #1e293b; }
+    .main-header h2 { font-size: 1.5rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.25rem; }
+    .main-header p { color: #64748b; font-size: 0.875rem; }
+    
+    .main-content { flex: 1; overflow-y: auto; padding: 2rem; }
+    
+    /* Página de Edição */
+    .editor-page { display: none; }
+    .editor-page.active { display: block; }
+    
+    /* Categories Grid */
+    .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .category-card { background: #1e293b; border: 2px solid #334155; border-radius: 16px; padding: 1.25rem; cursor: pointer; transition: all 0.2s; }
+    .category-card:hover { border-color: #0ea5e9; transform: translateY(-2px); }
+    .category-card.active { border-color: #0ea5e9; background: rgba(14, 165, 233, 0.1); }
+    .category-card.quiz:hover { border-color: #f59e0b; }
+    .category-card.quiz.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+    .category-card .cat-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+    .category-card .cat-icon { font-size: 1.5rem; }
+    .category-card .cat-name { font-weight: 600; color: #f1f5f9; font-size: 0.95rem; }
+    .category-card .cat-count { margin-left: auto; background: #334155; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.8rem; color: #94a3b8; }
+    .category-card .cat-products { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+    .category-card .cat-products img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 2px solid #334155; }
+    .category-card .cat-products .more { width: 36px; height: 36px; border-radius: 8px; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #94a3b8; }
+    
+    /* Editor Panel */
+    .editor-panel { background: #1e293b; border-radius: 20px; border: 1px solid #334155; overflow: hidden; }
+    .editor-panel-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 1rem; }
+    .editor-panel-header .icon { font-size: 1.5rem; }
+    .editor-panel-header h3 { font-size: 1.1rem; font-weight: 600; color: #f1f5f9; }
+    .editor-panel-header .close-btn { margin-left: auto; background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.5rem; padding: 0.25rem; }
+    .editor-panel-header .close-btn:hover { color: #f1f5f9; }
+    
+    .editor-panel-body { padding: 1.5rem; }
+    
+    /* Product List in Editor */
+    .product-list-label { font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
+    .product-list-label .hint { font-weight: 400; color: #475569; }
+    
+    .product-list { min-height: 100px; margin-bottom: 1.5rem; }
+    .product-item { display: flex; align-items: center; gap: 0.75rem; background: #0f172a; padding: 0.75rem; border-radius: 12px; margin-bottom: 0.5rem; border: 1px solid #334155; }
+    .product-item.dragging { opacity: 0.5; }
+    .product-item .drag-handle { color: #475569; cursor: grab; font-size: 1rem; }
+    .product-item img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: #334155; }
+    .product-item .info { flex: 1; min-width: 0; }
+    .product-item .info h4 { font-size: 0.875rem; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.15rem; }
+    .product-item .info span { font-size: 0.8rem; color: #10b981; font-weight: 500; }
+    .product-item .remove-btn { background: none; border: none; color: #64748b; cursor: pointer; padding: 0.5rem; border-radius: 8px; font-size: 1.1rem; }
+    .product-item .remove-btn:hover { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    
+    .empty-list { text-align: center; padding: 2rem; color: #475569; }
+    .empty-list .icon { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; }
+    
+    /* Search Section */
+    .search-section { border-top: 1px solid #334155; padding-top: 1.5rem; }
+    .search-box { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .search-box input { flex: 1; padding: 0.875rem 1rem; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #e2e8f0; font-size: 0.9rem; }
     .search-box input:focus { outline: none; border-color: #0ea5e9; }
-    .search-box input::placeholder { color: #64748b; }
-    .search-box button { padding: 0.875rem 1.5rem; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s; }
-    .search-box button:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(14, 165, 233, 0.3); }
+    .search-box button { padding: 0.875rem 1.5rem; background: #0ea5e9; border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: 600; }
+    .search-box button:hover { background: #0284c7; }
+    
+    .search-results { max-height: 300px; overflow-y: auto; }
+    .search-item { display: flex; align-items: center; gap: 0.75rem; background: #0f172a; padding: 0.75rem; border-radius: 12px; margin-bottom: 0.5rem; border: 1px solid #334155; }
+    .search-item img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+    .search-item .info { flex: 1; min-width: 0; }
+    .search-item .info h4 { font-size: 0.8rem; font-weight: 600; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .search-item .info span { font-size: 0.75rem; color: #10b981; }
+    .search-item .add-btn { background: #10b981; border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; font-weight: 600; }
+    .search-item .add-btn:hover { background: #059669; }
+    .search-item .add-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
 
-    .list { max-height: 320px; overflow-y: auto; padding-right: 0.5rem; }
-    .list::-webkit-scrollbar { width: 6px; }
-    .list::-webkit-scrollbar-track { background: rgba(51, 65, 85, 0.3); border-radius: 3px; }
-    .list::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
-    .list-label { font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem; font-weight: 500; }
+    /* Dashboard Page */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #1e293b; border-radius: 16px; padding: 1.5rem; border: 1px solid #334155; }
+    .stat-card .stat-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .stat-card .stat-value { font-size: 2rem; font-weight: 700; color: #0ea5e9; margin-bottom: 0.25rem; }
+    .stat-card.quiz .stat-value { color: #f59e0b; }
+    .stat-card .stat-label { font-size: 0.875rem; color: #64748b; }
+    
+    .stats-table { background: #1e293b; border-radius: 16px; border: 1px solid #334155; overflow: hidden; }
+    .stats-table-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 0.75rem; }
+    .stats-table-header h3 { font-size: 1rem; font-weight: 600; color: #f1f5f9; }
+    .stats-table-header .refresh-btn { margin-left: auto; background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.2rem; }
+    .stats-table-header .refresh-btn:hover { color: #f1f5f9; }
+    
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 1rem 1.5rem; text-align: left; }
+    th { background: #0f172a; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    td { border-top: 1px solid #334155; color: #e2e8f0; font-size: 0.875rem; }
+    .badge { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .badge-blue { background: rgba(14, 165, 233, 0.2); color: #38bdf8; }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
 
-    .item { display: flex; align-items: center; gap: 0.75rem; background: rgba(15, 23, 42, 0.6); padding: 0.75rem; border-radius: 12px; margin-bottom: 0.5rem; border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s; }
-    .item:hover { background: rgba(15, 23, 42, 0.9); border-color: rgba(255,255,255,0.1); }
-    .item img { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; background: #334155; }
-    .item .info { flex: 1; min-width: 0; }
-    .item .info h4 { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #f1f5f9; }
-    .item .info span { color: #22d3ee; font-size: 0.8rem; font-weight: 500; }
-    .item button { padding: 0.5rem 0.75rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600; flex-shrink: 0; transition: all 0.2s; }
-    .btn-add { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-    .btn-add:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); }
-    .btn-remove { background: rgba(239, 68, 68, 0.2); color: #f87171; }
-    .btn-remove:hover { background: #ef4444; color: white; }
-    .btn-disabled { background: rgba(51, 65, 85, 0.5); color: #64748b; cursor: not-allowed; }
+    /* Seed Button */
+    .seed-section { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .seed-section .icon { font-size: 2rem; }
+    .seed-section .text { flex: 1; }
+    .seed-section .text h4 { color: #000; font-weight: 700; margin-bottom: 0.25rem; }
+    .seed-section .text p { color: rgba(0,0,0,0.7); font-size: 0.85rem; }
+    .seed-section button { background: #000; color: #f59e0b; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    .seed-section button:hover { background: rgba(0,0,0,0.8); }
+    .seed-section button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .selected-item { cursor: grab; }
-    .selected-item:active { cursor: grabbing; }
-    .selected-item.dragging { opacity: 0.5; }
-    .drag-handle { color: #64748b; font-size: 1.1rem; cursor: grab; }
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .app { flex-direction: column; }
+    }
 
-    .empty { text-align: center; padding: 2rem; color: #64748b; font-size: 0.9rem; }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.5; }
-
-    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    th, td { padding: 0.875rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    th { color: #64748b; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    tbody tr { transition: background 0.2s; }
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
-    .badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
-    .badge-clicks { background: rgba(14, 165, 233, 0.2); color: #22d3ee; }
-    .badge-atc { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-    .badge-rate { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
-
-    .refresh-btn { background: none; border: none; color: #64748b; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: all 0.2s; margin-left: auto; font-size: 1.2rem; }
-    .refresh-btn:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
-
-    .seed-btn { padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: 10px; color: white; cursor: pointer; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; }
-    .seed-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3); }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
   </style>
 </head>
 <body>
+  <!-- Login -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <div class="logo">🎧</div>
       <h1>KZ Admin</h1>
-      <p>Recomendações & Quiz</p>
       <div class="login-error hidden" id="loginError">Senha incorreta</div>
       <input type="password" id="password" placeholder="Digite a senha" onkeyup="if(event.key==='Enter')login()">
       <button onclick="login()">Entrar</button>
     </div>
   </div>
 
-  <div class="container hidden" id="mainContent">
-    <header>
-      <div class="header-left">
+  <!-- App -->
+  <div class="app hidden" id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
         <span class="logo">🎧</span>
         <h1>KZ Admin</h1>
       </div>
-      <div class="header-right">
-        <div class="store-selector">
-          <button class="store-btn active" data-store="br" onclick="switchStore('br')">
-            <span class="flag">🇧🇷</span> Brasil
-          </button>
-          <button class="store-btn" data-store="global" onclick="switchStore('global')">
-            <span class="flag">🌍</span> Global
-          </button>
-        </div>
-        <button class="logout" onclick="logout()">Sair</button>
+      
+      <div class="store-switch">
+        <button class="active" data-store="br" onclick="switchStore('br')">🇧🇷 Brasil</button>
+        <button data-store="global" onclick="switchStore('global')">🌍 Global</button>
       </div>
-    </header>
-
-    <!-- Tab Navigation -->
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('recommendations')">🎯 Recomendações</button>
-      <button class="tab-btn quiz" onclick="switchTab('quiz')">🧩 Quiz</button>
-    </div>
-
-    <!-- ==================== RECOMMENDATIONS TAB ==================== -->
-    <div class="tab-content active" id="tab-recommendations">
-      <div class="stats">
-        <div class="stat"><div class="stat-icon">👁️</div><div class="stat-value" id="statViews">0</div><div class="stat-label">Visualizações</div></div>
-        <div class="stat"><div class="stat-icon">👆</div><div class="stat-value" id="statClicks">0</div><div class="stat-label">Cliques</div></div>
-        <div class="stat"><div class="stat-icon">🛒</div><div class="stat-value" id="statAtc">0</div><div class="stat-label">Add to Cart</div></div>
-        <div class="stat"><div class="stat-icon">📊</div><div class="stat-value" id="statRate">0%</div><div class="stat-label">Conversão</div></div>
-      </div>
-
-      <div class="main-grid">
-        <div class="section">
-          <div class="section-header">
-            <span class="section-icon">🏆</span>
-            <h2 class="section-title">Performance por Produto</h2>
-            <button class="refresh-btn" onclick="loadData()" title="Atualizar">🔄</button>
-          </div>
-          <table>
-            <thead><tr><th>Produto</th><th>Cliques</th><th>Cart</th><th>Taxa</th></tr></thead>
-            <tbody id="productStats"><tr><td colspan="4" class="empty"><div class="empty-icon">📊</div>Nenhum dado ainda</td></tr></tbody>
-          </table>
+      
+      <div class="nav-section">
+        <div class="nav-label">Editar Produtos</div>
+        <div class="nav-item active" onclick="showPage('recommendations')">
+          <span class="icon">🎯</span>
+          <span>Recomendações</span>
         </div>
-
-        <div class="section">
-          <div class="section-header">
-            <span class="section-icon">⚙️</span>
-            <h2 class="section-title">Gerenciar Recomendações</h2>
-          </div>
-          <div class="category-tabs" id="categoryTabs"></div>
-          <div class="list-label">Produtos selecionados (arraste para reordenar)</div>
-          <div class="list" id="selectedList"></div>
-          <div class="search-box" style="margin-top: 1rem;">
-            <input type="text" id="searchInput" placeholder="Buscar produtos..." oninput="debounceSearch()">
-            <button onclick="searchProducts()">Buscar</button>
-          </div>
-          <div class="list-label" style="margin-top: 1rem;">Resultados da busca</div>
-          <div class="list" id="searchResults"></div>
+        <div class="nav-item quiz" onclick="showPage('quiz')">
+          <span class="icon">🧩</span>
+          <span>Quiz</span>
         </div>
       </div>
-    </div>
-
-    <!-- ==================== QUIZ TAB ==================== -->
-    <div class="tab-content" id="tab-quiz">
-      <div class="stats">
-        <div class="stat quiz"><div class="stat-icon">🚀</div><div class="stat-value" id="quizStarts">0</div><div class="stat-label">Quiz Iniciados</div></div>
-        <div class="stat quiz"><div class="stat-icon">✅</div><div class="stat-value" id="quizCompletions">0</div><div class="stat-label">Completados</div></div>
-        <div class="stat quiz"><div class="stat-icon">📈</div><div class="stat-value" id="quizCompletionRate">0%</div><div class="stat-label">Taxa Conclusão</div></div>
-        <div class="stat quiz"><div class="stat-icon">🛒</div><div class="stat-value" id="quizAtc">0</div><div class="stat-label">Add to Cart</div></div>
-      </div>
-
-      <div class="main-grid">
-        <div class="section">
-          <div class="section-header">
-            <span class="section-icon">🏆</span>
-            <h2 class="section-title">Performance Quiz</h2>
-            <button class="refresh-btn" onclick="loadQuizData()" title="Atualizar">🔄</button>
-          </div>
-          <table>
-            <thead><tr><th>Produto</th><th>Cliques</th><th>Cart</th><th>Taxa</th></tr></thead>
-            <tbody id="quizProductStats"><tr><td colspan="4" class="empty"><div class="empty-icon">📊</div>Nenhum dado ainda</td></tr></tbody>
-          </table>
+      
+      <div class="nav-section">
+        <div class="nav-label">Relatórios</div>
+        <div class="nav-item" onclick="showPage('stats-rec')">
+          <span class="icon">📊</span>
+          <span>Stats Recomendações</span>
         </div>
-
-        <div class="section">
-          <div class="section-header">
-            <span class="section-icon">🧩</span>
-            <h2 class="section-title">Gerenciar Quiz</h2>
-          </div>
-          <button class="seed-btn" onclick="seedQuizData()">🌱 Pré-popular com dados atuais</button>
-          <select class="quiz-cat-select" id="quizCategorySelect" onchange="selectQuizCategory(this.value)">
-            <option value="">Selecione uma combinação...</option>
-          </select>
-          <div class="list-label">Produtos da combinação (arraste para reordenar)</div>
-          <div class="list" id="quizSelectedList"></div>
-          <div class="search-box" style="margin-top: 1rem;">
-            <input type="text" id="quizSearchInput" placeholder="Buscar produtos..." oninput="debounceQuizSearch()">
-            <button onclick="quizSearchProducts()">Buscar</button>
-          </div>
-          <div class="list-label" style="margin-top: 1rem;">Resultados da busca</div>
-          <div class="list" id="quizSearchResults"></div>
+        <div class="nav-item" onclick="showPage('stats-quiz')">
+          <span class="icon">📈</span>
+          <span>Stats Quiz</span>
         </div>
       </div>
-    </div>
+      
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">Sair</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="main-header">
+        <h2 id="pageTitle">Recomendações</h2>
+        <p id="pageDesc">Selecione uma categoria e gerencie os produtos recomendados</p>
+      </header>
+      
+      <div class="main-content">
+        <!-- Recommendations Editor -->
+        <div class="editor-page active" id="page-recommendations">
+          <div class="categories-grid" id="recCategoriesGrid"></div>
+          
+          <div class="editor-panel hidden" id="recEditorPanel">
+            <div class="editor-panel-header">
+              <span class="icon" id="recEditorIcon">🎸</span>
+              <h3 id="recEditorTitle">Guitarristas</h3>
+              <button class="close-btn" onclick="closeEditor('rec')">&times;</button>
+            </div>
+            <div class="editor-panel-body">
+              <div class="product-list-label">
+                Produtos selecionados <span class="hint">(arraste para reordenar)</span>
+              </div>
+              <div class="product-list" id="recProductList"></div>
+              
+              <div class="search-section">
+                <div class="search-box">
+                  <input type="text" id="recSearchInput" placeholder="Buscar produtos..." oninput="debounceSearch('rec')">
+                  <button onclick="searchProducts('rec')">Buscar</button>
+                </div>
+                <div class="search-results" id="recSearchResults"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz Editor -->
+        <div class="editor-page" id="page-quiz">
+          <div class="seed-section">
+            <span class="icon">🌱</span>
+            <div class="text">
+              <h4>Pré-popular Quiz</h4>
+              <p>Carrega os produtos configurados no código original do quiz</p>
+            </div>
+            <button id="seedBtn" onclick="seedQuizData()">Carregar</button>
+          </div>
+          
+          <div class="categories-grid" id="quizCategoriesGrid"></div>
+          
+          <div class="editor-panel hidden" id="quizEditorPanel">
+            <div class="editor-panel-header">
+              <span class="icon" id="quizEditorIcon">🎸</span>
+              <h3 id="quizEditorTitle">Categoria</h3>
+              <button class="close-btn" onclick="closeEditor('quiz')">&times;</button>
+            </div>
+            <div class="editor-panel-body">
+              <div class="product-list-label">
+                Produtos selecionados <span class="hint">(arraste para reordenar)</span>
+              </div>
+              <div class="product-list" id="quizProductList"></div>
+              
+              <div class="search-section">
+                <div class="search-box">
+                  <input type="text" id="quizSearchInput" placeholder="Buscar produtos..." oninput="debounceSearch('quiz')">
+                  <button onclick="searchProducts('quiz')">Buscar</button>
+                </div>
+                <div class="search-results" id="quizSearchResults"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Recommendations -->
+        <div class="editor-page" id="page-stats-rec">
+          <div class="stats-grid" id="recStatsGrid"></div>
+          <div class="stats-table">
+            <div class="stats-table-header">
+              <span>🏆</span>
+              <h3>Performance por Produto</h3>
+              <button class="refresh-btn" onclick="loadRecStats()">🔄</button>
+            </div>
+            <table>
+              <thead><tr><th>Produto</th><th>Cliques</th><th>Add Cart</th><th>Taxa</th></tr></thead>
+              <tbody id="recStatsTable"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Stats Quiz -->
+        <div class="editor-page" id="page-stats-quiz">
+          <div class="stats-grid" id="quizStatsGrid"></div>
+          <div class="stats-table">
+            <div class="stats-table-header">
+              <span>🏆</span>
+              <h3>Performance por Produto</h3>
+              <button class="refresh-btn" onclick="loadQuizStats()">🔄</button>
+            </div>
+            <table>
+              <thead><tr><th>Produto</th><th>Cliques</th><th>Add Cart</th><th>Taxa</th></tr></thead>
+              <tbody id="quizStatsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 
   <script>
+    // ==================== STATE ====================
     let auth = localStorage.getItem('kz_admin_auth');
     let currentStore = 'br';
-    let currentTab = 'recommendations';
+    let currentPage = 'recommendations';
     let recommendations = {};
     let quizData = {};
-    let currentCategory = '';
+    let currentRecCategory = '';
     let currentQuizCategory = '';
-    let searchTimeout, quizSearchTimeout;
+    let searchTimeout;
 
-    const STORE_CONFIG = {
-      br: {
-        categories: ['Guitarristas', 'Bateristas', 'Tecladistas', 'Cantores', 'Baixistas', 'Produtores', 'DJs', 'Gamers'],
-        somCategories: ['Som: Graves Potentes', 'Som: Equilibrado', 'Som: Energético'],
-        somLabel: '🎵 Tipo de Som:'
-      },
-      global: {
-        categories: ['Guitarists', 'Drummers', 'Keyboardists', 'Singers', 'Bassists', 'Producers', 'DJs', 'Gamers'],
-        somCategories: ['Sound: Deep Bass', 'Sound: Balanced', 'Sound: Energetic'],
-        somLabel: '🎵 Sound Type:'
-      }
+    const CATEGORY_ICONS = {
+      'Guitarristas': '🎸', 'Bateristas': '🥁', 'Tecladistas': '🎹', 'Cantores': '🎤',
+      'Baixistas': '🎸', 'Produtores': '🎛️', 'DJs': '🎧', 'Gamers': '🎮',
+      'Som: Graves Potentes': '🔊', 'Som: Equilibrado': '⚖️', 'Som: Energético': '⚡',
+      'Guitarists': '🎸', 'Drummers': '🥁', 'Keyboardists': '🎹', 'Singers': '🎤',
+      'Bassists': '🎸', 'Producers': '🎛️', 'Sound: Deep Bass': '🔊', 
+      'Sound: Balanced': '⚖️', 'Sound: Energetic': '⚡'
     };
 
-    if (auth) { document.getElementById('loginOverlay').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden'); loadData(); }
+    const QUIZ_ICONS = {
+      'retorno': '🎤', 'casual': '🎵', 'mixagem': '🎛️', 'audiovisual': '🎬', 'games': '🎮',
+      'guitarra': '🎸', 'baixo': '🎸', 'bateria': '🥁', 'teclado': '🎹', 'vocal': '🎤',
+      'masculino': '♂️', 'feminino': '♀️', 'equilibrado': '⚖️', 'graves': '🔊', 'energetico': '⚡',
+      'eletronica': '🎛️', 'rock': '🤘', 'hiphop': '🎤', 'classica': '🎻', 'pop': '🎵',
+      'gospel': '🙏', 'diversos': '🎶', 'edicao': '✂️', 'streaming': '📡', 'cinema': '🎥',
+      'animacao': '🎨', 'fps': '🎯', 'rpg': '⚔️', 'moba': '🏰'
+    };
+
+    const QUIZ_LABELS = {
+      'retorno-guitarra-masculino': 'Retorno › Guitarra › Masculino',
+      'retorno-baixo-masculino': 'Retorno › Baixo › Masculino',
+      'retorno-bateria-masculino': 'Retorno › Bateria › Masculino',
+      'retorno-teclado-masculino': 'Retorno › Teclado › Masculino',
+      'retorno-vocal-masculino': 'Retorno › Vocal › Masculino',
+      'retorno-outros-masculino': 'Retorno › Outros › Masculino',
+      'retorno-guitarra-feminino': 'Retorno › Guitarra › Feminino',
+      'retorno-baixo-feminino': 'Retorno › Baixo › Feminino',
+      'retorno-bateria-feminino': 'Retorno › Bateria › Feminino',
+      'retorno-teclado-feminino': 'Retorno › Teclado › Feminino',
+      'retorno-vocal-feminino': 'Retorno › Vocal › Feminino',
+      'retorno-outros-feminino': 'Retorno › Outros › Feminino',
+      'casual-equilibrado': 'Casual › Equilibrado',
+      'casual-graves': 'Casual › Graves Potentes',
+      'casual-energetico': 'Casual › Energético',
+      'mixagem-eletronica': 'Mixagem › Eletrônica',
+      'mixagem-rock': 'Mixagem › Rock/Metal',
+      'mixagem-hiphop': 'Mixagem › Hip Hop',
+      'mixagem-classica': 'Mixagem › Clássica',
+      'mixagem-pop': 'Mixagem › Pop/MPB',
+      'mixagem-gospel': 'Mixagem › Gospel',
+      'mixagem-diversos': 'Mixagem › Diversos',
+      'audiovisual-edicao': 'Audiovisual › Edição',
+      'audiovisual-streaming': 'Audiovisual › Streaming',
+      'audiovisual-cinema': 'Audiovisual › Cinema',
+      'audiovisual-animacao': 'Audiovisual › Animação',
+      'games-fps': 'Games › FPS/Competitivo',
+      'games-rpg': 'Games › RPG/Aventura',
+      'games-moba': 'Games › MOBA/Estratégia',
+      'games-casual': 'Games › Casual'
+    };
+
+    const STORE_CATEGORIES = {
+      br: ['Guitarristas', 'Bateristas', 'Tecladistas', 'Cantores', 'Baixistas', 'Produtores', 'DJs', 'Gamers', 'Som: Graves Potentes', 'Som: Equilibrado', 'Som: Energético'],
+      global: ['Guitarists', 'Drummers', 'Keyboardists', 'Singers', 'Bassists', 'Producers', 'DJs', 'Gamers', 'Sound: Deep Bass', 'Sound: Balanced', 'Sound: Energetic']
+    };
+
+    const QUIZ_CATEGORIES = [
+      'retorno-guitarra-masculino', 'retorno-baixo-masculino', 'retorno-bateria-masculino',
+      'retorno-teclado-masculino', 'retorno-vocal-masculino', 'retorno-outros-masculino',
+      'retorno-guitarra-feminino', 'retorno-baixo-feminino', 'retorno-bateria-feminino',
+      'retorno-teclado-feminino', 'retorno-vocal-feminino', 'retorno-outros-feminino',
+      'casual-equilibrado', 'casual-graves', 'casual-energetico',
+      'mixagem-eletronica', 'mixagem-rock', 'mixagem-hiphop', 'mixagem-classica',
+      'mixagem-pop', 'mixagem-gospel', 'mixagem-diversos',
+      'audiovisual-edicao', 'audiovisual-streaming', 'audiovisual-cinema', 'audiovisual-animacao',
+      'games-fps', 'games-rpg', 'games-moba', 'games-casual'
+    ];
+
+    // ==================== AUTH ====================
+    if (auth) { document.getElementById('loginOverlay').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); init(); }
 
     function login() {
       const pass = document.getElementById('password').value;
       auth = btoa('admin:' + pass);
       fetch('/api/admin/admin?action=stats&store=br', { headers: { 'Authorization': 'Basic ' + auth } })
         .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-        .then(() => { localStorage.setItem('kz_admin_auth', auth); document.getElementById('loginOverlay').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden'); loadData(); })
+        .then(() => { localStorage.setItem('kz_admin_auth', auth); document.getElementById('loginOverlay').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); init(); })
         .catch(() => { document.getElementById('loginError').classList.remove('hidden'); });
     }
 
     function logout() { localStorage.removeItem('kz_admin_auth'); location.reload(); }
 
-    function switchStore(store) {
-      currentStore = store;
-      document.querySelectorAll('.store-btn').forEach(btn => {
-        btn.classList.remove('active', 'global');
-        if (btn.dataset.store === store) {
-          btn.classList.add('active');
-          if (store === 'global') btn.classList.add('global');
-        }
-      });
-      loadData();
-      if (currentTab === 'quiz') loadQuizData();
-    }
-
-    function switchTab(tab) {
-      currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelector(`.tab-btn${tab === 'quiz' ? '.quiz' : ':not(.quiz)'}`).classList.add('active');
-      document.getElementById(`tab-${tab}`).classList.add('active');
-      if (tab === 'quiz') loadQuizData();
-    }
-
+    // ==================== API ====================
     async function api(action, options = {}) {
       const res = await fetch(`/api/admin/admin?action=${action}&store=${currentStore}`, {
         ...options,
@@ -315,65 +431,280 @@
       return res.json();
     }
 
-    // ==================== RECOMMENDATIONS ====================
-    async function loadData() {
-      const [stats, recs] = await Promise.all([api('stats'), api('recommendations')]);
-      
-      const views = stats.views || 0;
-      const clicks = stats.clicks || 0;
-      const atc = stats.addToCart || 0;
-      const rate = clicks > 0 ? ((atc / clicks) * 100).toFixed(1) : '0';
-      
-      document.getElementById('statViews').textContent = views.toLocaleString();
-      document.getElementById('statClicks').textContent = clicks.toLocaleString();
-      document.getElementById('statAtc').textContent = atc.toLocaleString();
-      document.getElementById('statRate').textContent = rate + '%';
-
-      const tbody = document.getElementById('productStats');
-      if (stats.products?.length) {
-        tbody.innerHTML = stats.products.slice(0, 10).map(p => {
-          const pRate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
-          return `<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${p.title}">${p.title}</td><td><span class="badge badge-clicks">${p.clicks}</span></td><td><span class="badge badge-atc">${p.addToCart}</span></td><td><span class="badge badge-rate">${pRate}%</span></td></tr>`;
-        }).join('');
-      } else {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty"><div class="empty-icon">📊</div>Nenhum dado ainda</td></tr>';
-      }
-
+    // ==================== INIT ====================
+    async function init() {
+      const [recs, quiz] = await Promise.all([api('recommendations'), api('quiz-data')]);
       recommendations = recs || {};
-      renderCategoryTabs();
-      const config = STORE_CONFIG[currentStore];
-      if (!currentCategory || ![...config.categories, ...config.somCategories].includes(currentCategory)) {
-        selectCategory(config.categories[0]);
+      quizData = quiz || {};
+      renderRecCategories();
+      renderQuizCategories();
+    }
+
+    // ==================== NAVIGATION ====================
+    function switchStore(store) {
+      currentStore = store;
+      document.querySelectorAll('.store-switch button').forEach(btn => {
+        btn.classList.remove('active', 'global');
+        if (btn.dataset.store === store) {
+          btn.classList.add('active');
+          if (store === 'global') btn.classList.add('global');
+        }
+      });
+      closeEditor('rec');
+      closeEditor('quiz');
+      init();
+    }
+
+    function showPage(page) {
+      currentPage = page;
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.editor-page').forEach(p => p.classList.remove('active'));
+      
+      const pageEl = document.getElementById(`page-${page}`);
+      if (pageEl) pageEl.classList.add('active');
+      
+      // Update nav active state
+      const navMap = { 'recommendations': 0, 'quiz': 1, 'stats-rec': 2, 'stats-quiz': 3 };
+      document.querySelectorAll('.nav-item')[navMap[page]]?.classList.add('active');
+      
+      // Update header
+      const titles = {
+        'recommendations': ['Recomendações', 'Selecione uma categoria e gerencie os produtos recomendados'],
+        'quiz': ['Quiz', 'Configure os produtos exibidos em cada resultado do quiz'],
+        'stats-rec': ['Estatísticas - Recomendações', 'Acompanhe o desempenho das recomendações'],
+        'stats-quiz': ['Estatísticas - Quiz', 'Acompanhe o desempenho do quiz']
+      };
+      document.getElementById('pageTitle').textContent = titles[page][0];
+      document.getElementById('pageDesc').textContent = titles[page][1];
+      
+      // Load stats if needed
+      if (page === 'stats-rec') loadRecStats();
+      if (page === 'stats-quiz') loadQuizStats();
+    }
+
+    // ==================== RECOMMENDATIONS ====================
+    function renderRecCategories() {
+      const cats = STORE_CATEGORIES[currentStore];
+      const grid = document.getElementById('recCategoriesGrid');
+      grid.innerHTML = cats.map(cat => {
+        const products = recommendations[cat] || [];
+        const icon = CATEGORY_ICONS[cat] || '📦';
+        const images = products.slice(0, 4).map(p => `<img src="${p.image || 'https://placehold.co/36/334155/64748b?text=?'}" alt="">`).join('');
+        const more = products.length > 4 ? `<span class="more">+${products.length - 4}</span>` : '';
+        return `
+          <div class="category-card ${currentRecCategory === cat ? 'active' : ''}" onclick="selectRecCategory('${cat}')">
+            <div class="cat-header">
+              <span class="cat-icon">${icon}</span>
+              <span class="cat-name">${cat.replace('Som: ', '').replace('Sound: ', '')}</span>
+              <span class="cat-count">${products.length}</span>
+            </div>
+            <div class="cat-products">${images}${more}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectRecCategory(cat) {
+      currentRecCategory = cat;
+      renderRecCategories();
+      document.getElementById('recEditorPanel').classList.remove('hidden');
+      document.getElementById('recEditorIcon').textContent = CATEGORY_ICONS[cat] || '📦';
+      document.getElementById('recEditorTitle').textContent = cat;
+      renderRecProducts();
+      loadSearchResults('rec');
+    }
+
+    function closeEditor(type) {
+      if (type === 'rec') {
+        currentRecCategory = '';
+        document.getElementById('recEditorPanel').classList.add('hidden');
+        renderRecCategories();
+      } else {
+        currentQuizCategory = '';
+        document.getElementById('quizEditorPanel').classList.add('hidden');
+        renderQuizCategories();
       }
-      loadInitialProducts();
     }
 
-    function renderCategoryTabs() {
-      const config = STORE_CONFIG[currentStore];
-      const mainTabs = config.categories.map(cat => {
-        const count = recommendations[cat]?.length || 0;
-        return `<button class="cat-tab ${currentCategory === cat ? 'active' : ''}" onclick="selectCategory('${cat}')">${cat}<span class="count">${count}</span></button>`;
+    function renderRecProducts() {
+      const list = document.getElementById('recProductList');
+      const products = recommendations[currentRecCategory] || [];
+      if (!products.length) {
+        list.innerHTML = '<div class="empty-list"><div class="icon">📦</div>Nenhum produto selecionado</div>';
+        return;
+      }
+      list.innerHTML = products.map(p => `
+        <div class="product-item" draggable="true" data-handle="${p.handle}">
+          <span class="drag-handle">☰</span>
+          <img src="${p.image || 'https://placehold.co/48/334155/64748b?text=?'}" alt="">
+          <div class="info">
+            <h4>${p.name}</h4>
+            <span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span>
+          </div>
+          <button class="remove-btn" onclick="removeRecProduct('${p.handle}')">✕</button>
+        </div>
+      `).join('');
+      setupDragDrop('recProductList', saveRecOrder);
+    }
+
+    async function addRecProduct(product) {
+      const res = await api('save', { method: 'POST', body: JSON.stringify({ category: currentRecCategory, product }) });
+      if (res.success) { recommendations = res.data; renderRecProducts(); renderRecCategories(); loadSearchResults('rec'); }
+    }
+
+    async function removeRecProduct(handle) {
+      const res = await api(`remove&category=${currentRecCategory}&handle=${encodeURIComponent(handle)}`, { method: 'DELETE' });
+      if (res.success) { recommendations = res.data; renderRecProducts(); renderRecCategories(); loadSearchResults('rec'); }
+    }
+
+    async function saveRecOrder() {
+      const order = [...document.querySelectorAll('#recProductList .product-item')].map(i => i.dataset.handle);
+      const res = await api('reorder', { method: 'POST', body: JSON.stringify({ category: currentRecCategory, order }) });
+      if (res.success) recommendations = res.data;
+    }
+
+    // ==================== QUIZ ====================
+    function renderQuizCategories() {
+      const grid = document.getElementById('quizCategoriesGrid');
+      grid.innerHTML = QUIZ_CATEGORIES.map(cat => {
+        const products = quizData[cat] || [];
+        const label = QUIZ_LABELS[cat] || cat;
+        const parts = cat.split('-');
+        const icon = QUIZ_ICONS[parts[1]] || QUIZ_ICONS[parts[0]] || '📦';
+        const images = products.slice(0, 4).map(p => `<img src="${p.image || 'https://placehold.co/36/334155/64748b?text=?'}" alt="">`).join('');
+        const more = products.length > 4 ? `<span class="more">+${products.length - 4}</span>` : '';
+        return `
+          <div class="category-card quiz ${currentQuizCategory === cat ? 'active' : ''}" onclick="selectQuizCategory('${cat}')">
+            <div class="cat-header">
+              <span class="cat-icon">${icon}</span>
+              <span class="cat-name">${label}</span>
+              <span class="cat-count">${products.length}</span>
+            </div>
+            <div class="cat-products">${images}${more}</div>
+          </div>
+        `;
       }).join('');
-      const somTabs = config.somCategories.map(cat => {
-        const count = recommendations[cat]?.length || 0;
-        const label = cat.replace('Som: ', '').replace('Sound: ', '');
-        return `<button class="cat-tab som-tab ${currentCategory === cat ? 'active' : ''}" onclick="selectCategory('${cat}')">${label}<span class="count">${count}</span></button>`;
+    }
+
+    function selectQuizCategory(cat) {
+      currentQuizCategory = cat;
+      renderQuizCategories();
+      document.getElementById('quizEditorPanel').classList.remove('hidden');
+      const parts = cat.split('-');
+      document.getElementById('quizEditorIcon').textContent = QUIZ_ICONS[parts[1]] || QUIZ_ICONS[parts[0]] || '📦';
+      document.getElementById('quizEditorTitle').textContent = QUIZ_LABELS[cat] || cat;
+      renderQuizProducts();
+      loadSearchResults('quiz');
+    }
+
+    function renderQuizProducts() {
+      const list = document.getElementById('quizProductList');
+      const products = quizData[currentQuizCategory] || [];
+      if (!products.length) {
+        list.innerHTML = '<div class="empty-list"><div class="icon">📦</div>Nenhum produto selecionado</div>';
+        return;
+      }
+      list.innerHTML = products.map(p => `
+        <div class="product-item" draggable="true" data-handle="${p.handle}">
+          <span class="drag-handle">☰</span>
+          <img src="${p.image || 'https://placehold.co/48/334155/64748b?text=?'}" alt="">
+          <div class="info">
+            <h4>${p.name}</h4>
+            <span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span>
+          </div>
+          <button class="remove-btn" onclick="removeQuizProduct('${p.handle}')">✕</button>
+        </div>
+      `).join('');
+      setupDragDrop('quizProductList', saveQuizOrder);
+    }
+
+    async function addQuizProduct(product) {
+      const res = await api('quiz-save', { method: 'POST', body: JSON.stringify({ category: currentQuizCategory, product }) });
+      if (res.success) { quizData = res.data; renderQuizProducts(); renderQuizCategories(); loadSearchResults('quiz'); }
+    }
+
+    async function removeQuizProduct(handle) {
+      const res = await api(`quiz-remove&category=${currentQuizCategory}&handle=${encodeURIComponent(handle)}`, { method: 'DELETE' });
+      if (res.success) { quizData = res.data; renderQuizProducts(); renderQuizCategories(); loadSearchResults('quiz'); }
+    }
+
+    async function saveQuizOrder() {
+      const order = [...document.querySelectorAll('#quizProductList .product-item')].map(i => i.dataset.handle);
+      const res = await api('quiz-reorder', { method: 'POST', body: JSON.stringify({ category: currentQuizCategory, order }) });
+      if (res.success) quizData = res.data;
+    }
+
+    async function seedQuizData() {
+      if (!confirm('Isso vai pré-popular o quiz com os produtos do código original. Continuar?')) return;
+      const btn = document.getElementById('seedBtn');
+      btn.textContent = 'Carregando...';
+      btn.disabled = true;
+      try {
+        const res = await api('quiz-seed', { method: 'POST' });
+        if (res.success) {
+          alert(`Quiz pré-populado!\nProdutos encontrados: ${res.productsFound} de ${res.totalHandles}`);
+          quizData = res.data;
+          renderQuizCategories();
+        } else {
+          alert('Erro: ' + (res.error || 'Desconhecido'));
+        }
+      } catch (e) {
+        alert('Erro de conexão: ' + e.message);
+      }
+      btn.textContent = 'Carregar';
+      btn.disabled = false;
+    }
+
+    // ==================== SEARCH ====================
+    function debounceSearch(type) {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => searchProducts(type), 300);
+    }
+
+    async function searchProducts(type) {
+      const input = document.getElementById(`${type}SearchInput`);
+      const search = input.value.trim();
+      loadSearchResults(type, search);
+    }
+
+    async function loadSearchResults(type, search = '') {
+      const container = document.getElementById(`${type}SearchResults`);
+      container.innerHTML = '<div class="empty-list"><div class="icon">⏳</div>Carregando...</div>';
+      
+      const data = await api(`products&search=${encodeURIComponent(search)}`);
+      if (!data.nodes?.length) {
+        container.innerHTML = '<div class="empty-list"><div class="icon">🔍</div>Nenhum produto encontrado</div>';
+        return;
+      }
+      
+      const selected = type === 'rec' ? (recommendations[currentRecCategory] || []) : (quizData[currentQuizCategory] || []);
+      
+      container.innerHTML = data.nodes.map(p => {
+        const isSelected = selected.some(s => s.handle === p.handle);
+        const price = p.priceRangeV2?.minVariantPrice;
+        const desc = (p.descriptionHtml || '').replace(/<[^>]*>/g, '').substring(0, 120);
+        const productData = JSON.stringify({
+          title: p.title, handle: p.handle, image: p.featuredImage?.url,
+          price: price?.amount, currency: price?.currencyCode,
+          variantId: p.variants?.nodes?.[0]?.id,
+          description: desc + (desc.length >= 120 ? '...' : '')
+        }).replace(/'/g, "&#39;");
+        return `
+          <div class="search-item">
+            <img src="${p.featuredImage?.url || 'https://placehold.co/40/334155/64748b?text=?'}" alt="">
+            <div class="info">
+              <h4>${p.title}</h4>
+              <span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span>
+            </div>
+            <button class="add-btn" ${isSelected ? 'disabled' : ''} onclick='${type === "rec" ? "addRecProduct" : "addQuizProduct"}(${productData})'>${isSelected ? '✓' : '+'}</button>
+          </div>
+        `;
       }).join('');
-      document.getElementById('categoryTabs').innerHTML = `${mainTabs}<div style="width:100%;margin:0.5rem 0;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.1);"><span style="font-size:0.7rem;color:#64748b;margin-right:0.5rem;">${config.somLabel}</span>${somTabs}</div>`;
     }
 
-    function selectCategory(cat) { currentCategory = cat; renderCategoryTabs(); renderSelected(); }
-
-    function renderSelected() {
-      const list = document.getElementById('selectedList');
-      const items = recommendations[currentCategory] || [];
-      if (!items.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📦</div>Vazio - busque e adicione produtos</div>'; return; }
-      list.innerHTML = items.map(p => `<div class="item selected-item" draggable="true" data-handle="${p.handle}"><span class="drag-handle">☰</span><img src="${p.image || 'https://placehold.co/48/1e293b/64748b?text=?'}" alt=""><div class="info"><h4>${p.name}</h4><span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span></div><button class="btn-remove" onclick="removeProduct('${p.handle}')">✕</button></div>`).join('');
-      setupDragDrop('selectedList', saveOrder);
-    }
-
+    // ==================== DRAG & DROP ====================
     function setupDragDrop(listId, saveCallback) {
-      const items = document.querySelectorAll(`#${listId} .selected-item`);
+      const items = document.querySelectorAll(`#${listId} .product-item`);
       let draggedItem = null;
       items.forEach(item => {
         item.addEventListener('dragstart', () => { draggedItem = item; item.classList.add('dragging'); });
@@ -382,7 +713,7 @@
           e.preventDefault();
           if (draggedItem && draggedItem !== item) {
             const list = document.getElementById(listId);
-            const children = [...list.querySelectorAll('.selected-item')];
+            const children = [...list.querySelectorAll('.product-item')];
             if (children.indexOf(draggedItem) < children.indexOf(item)) item.after(draggedItem);
             else item.before(draggedItem);
           }
@@ -390,196 +721,49 @@
       });
     }
 
-    async function saveOrder() {
-      const order = [...document.querySelectorAll('#selectedList .selected-item')].map(i => i.dataset.handle);
-      const res = await api('reorder', { method: 'POST', body: JSON.stringify({ category: currentCategory, order }) });
-      if (res.success) recommendations = res.data;
-    }
-
-    async function loadInitialProducts() {
-      const container = document.getElementById('searchResults');
-      container.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div>Carregando...</div>';
-      const data = await api('products&search=');
-      if (!data.nodes?.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">📦</div>Nenhum produto</div>'; return; }
-      renderProductList(data.nodes, 'searchResults', recommendations[currentCategory] || [], addProduct);
-    }
-
-    function debounceSearch() { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => searchProducts(), 300); }
-
-    async function searchProducts() {
-      const search = document.getElementById('searchInput').value.trim();
-      const container = document.getElementById('searchResults');
-      container.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div>Buscando...</div>';
-      const data = await api(`products&search=${encodeURIComponent(search)}`);
-      if (!data.nodes?.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div>Nenhum encontrado</div>'; return; }
-      renderProductList(data.nodes, 'searchResults', recommendations[currentCategory] || [], addProduct);
-    }
-
-    function renderProductList(products, containerId, selected, addCallback) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = products.map(p => {
-        const isSelected = selected.some(s => s.handle === p.handle);
-        const price = p.priceRangeV2?.minVariantPrice;
-        return `<div class="item"><img src="${p.featuredImage?.url || 'https://placehold.co/48/1e293b/64748b?text=?'}" alt=""><div class="info"><h4>${p.title}</h4><span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span></div>${isSelected ? '<button class="btn-disabled" disabled>✓</button>' : `<button class="btn-add" onclick='${addCallback.name}(${JSON.stringify({title: p.title, handle: p.handle, image: p.featuredImage?.url, price: price?.amount, currency: price?.currencyCode, variantId: p.variants?.nodes?.[0]?.id}).replace(/'/g, "&#39;")})'>+</button>`}</div>`;
-      }).join('');
-    }
-
-    async function addProduct(product) {
-      const res = await api('save', { method: 'POST', body: JSON.stringify({ category: currentCategory, product }) });
-      if (res.success) { recommendations = res.data; renderCategoryTabs(); renderSelected(); searchProducts(); }
-    }
-
-    async function removeProduct(handle) {
-      const res = await api(`remove&category=${currentCategory}&handle=${encodeURIComponent(handle)}`, { method: 'DELETE' });
-      if (res.success) { recommendations = res.data; renderCategoryTabs(); renderSelected(); searchProducts(); }
-    }
-
-    // ==================== QUIZ ====================
-    async function loadQuizData() {
-      const [stats, categories, data] = await Promise.all([api('quiz-stats'), api('quiz-categories'), api('quiz-data')]);
+    // ==================== STATS ====================
+    async function loadRecStats() {
+      const stats = await api('stats');
+      const grid = document.getElementById('recStatsGrid');
+      const rate = stats.clicks > 0 ? ((stats.addToCart / stats.clicks) * 100).toFixed(1) : '0';
+      grid.innerHTML = `
+        <div class="stat-card"><div class="stat-icon">👁️</div><div class="stat-value">${(stats.views || 0).toLocaleString()}</div><div class="stat-label">Visualizações</div></div>
+        <div class="stat-card"><div class="stat-icon">👆</div><div class="stat-value">${(stats.clicks || 0).toLocaleString()}</div><div class="stat-label">Cliques</div></div>
+        <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-value">${(stats.addToCart || 0).toLocaleString()}</div><div class="stat-label">Add to Cart</div></div>
+        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">${rate}%</div><div class="stat-label">Conversão</div></div>
+      `;
       
-      document.getElementById('quizStarts').textContent = (stats.starts || 0).toLocaleString();
-      document.getElementById('quizCompletions').textContent = (stats.completions || 0).toLocaleString();
-      document.getElementById('quizCompletionRate').textContent = (stats.completionRate || '0') + '%';
-      
-      const totalAtc = stats.products?.reduce((sum, p) => sum + p.addToCart, 0) || 0;
-      document.getElementById('quizAtc').textContent = totalAtc.toLocaleString();
-
-      const tbody = document.getElementById('quizProductStats');
+      const tbody = document.getElementById('recStatsTable');
       if (stats.products?.length) {
-        tbody.innerHTML = stats.products.slice(0, 10).map(p => {
+        tbody.innerHTML = stats.products.slice(0, 15).map(p => {
           const pRate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
-          return `<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${p.title}">${p.title}</td><td><span class="badge badge-clicks">${p.clicks}</span></td><td><span class="badge badge-atc">${p.addToCart}</span></td><td><span class="badge badge-rate">${pRate}%</span></td></tr>`;
+          return `<tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-blue">${p.clicks}</span></td><td><span class="badge badge-green">${p.addToCart}</span></td><td><span class="badge badge-purple">${pRate}%</span></td></tr>`;
         }).join('');
       } else {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty"><div class="empty-icon">📊</div>Nenhum dado ainda</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:2rem;">Nenhum dado ainda</td></tr>';
       }
+    }
 
-      // Populate category dropdown
-      const select = document.getElementById('quizCategorySelect');
-      const groups = { 'Retorno Masculino': [], 'Retorno Feminino': [], 'Casual': [], 'Mixagem': [], 'Audiovisual': [], 'Games': [] };
-      categories.forEach(c => {
-        if (c.id.includes('masculino')) groups['Retorno Masculino'].push(c);
-        else if (c.id.includes('feminino')) groups['Retorno Feminino'].push(c);
-        else if (c.id.startsWith('casual')) groups['Casual'].push(c);
-        else if (c.id.startsWith('mixagem')) groups['Mixagem'].push(c);
-        else if (c.id.startsWith('audiovisual')) groups['Audiovisual'].push(c);
-        else if (c.id.startsWith('games')) groups['Games'].push(c);
-      });
+    async function loadQuizStats() {
+      const stats = await api('quiz-stats');
+      const grid = document.getElementById('quizStatsGrid');
+      const totalAtc = stats.products?.reduce((sum, p) => sum + p.addToCart, 0) || 0;
+      grid.innerHTML = `
+        <div class="stat-card quiz"><div class="stat-icon">🚀</div><div class="stat-value">${(stats.starts || 0).toLocaleString()}</div><div class="stat-label">Quiz Iniciados</div></div>
+        <div class="stat-card quiz"><div class="stat-icon">✅</div><div class="stat-value">${(stats.completions || 0).toLocaleString()}</div><div class="stat-label">Completados</div></div>
+        <div class="stat-card quiz"><div class="stat-icon">📈</div><div class="stat-value">${stats.completionRate || '0'}%</div><div class="stat-label">Taxa Conclusão</div></div>
+        <div class="stat-card quiz"><div class="stat-icon">🛒</div><div class="stat-value">${totalAtc.toLocaleString()}</div><div class="stat-label">Add to Cart</div></div>
+      `;
       
-      let html = '<option value="">Selecione uma combinação...</option>';
-      Object.entries(groups).forEach(([group, cats]) => {
-        if (cats.length) {
-          html += `<optgroup label="${group}">`;
-          cats.forEach(c => {
-            const count = data[c.id]?.length || 0;
-            html += `<option value="${c.id}">${c.label} (${count})</option>`;
-          });
-          html += '</optgroup>';
-        }
-      });
-      select.innerHTML = html;
-
-      quizData = data || {};
-      if (currentQuizCategory) {
-        select.value = currentQuizCategory;
-        renderQuizSelected();
-      }
-    }
-
-    function selectQuizCategory(cat) {
-      currentQuizCategory = cat;
-      renderQuizSelected();
-      loadQuizInitialProducts();
-    }
-
-    function renderQuizSelected() {
-      const list = document.getElementById('quizSelectedList');
-      if (!currentQuizCategory) { list.innerHTML = '<div class="empty"><div class="empty-icon">👆</div>Selecione uma combinação acima</div>'; return; }
-      const items = quizData[currentQuizCategory] || [];
-      if (!items.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📦</div>Vazio - busque e adicione produtos</div>'; return; }
-      list.innerHTML = items.map(p => `<div class="item selected-item" draggable="true" data-handle="${p.handle}"><span class="drag-handle">☰</span><img src="${p.image || 'https://placehold.co/48/1e293b/64748b?text=?'}" alt=""><div class="info"><h4>${p.name}</h4><span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span></div><button class="btn-remove" onclick="removeQuizProduct('${p.handle}')">✕</button></div>`).join('');
-      setupDragDrop('quizSelectedList', saveQuizOrder);
-    }
-
-    async function saveQuizOrder() {
-      const order = [...document.querySelectorAll('#quizSelectedList .selected-item')].map(i => i.dataset.handle);
-      const res = await api('quiz-reorder', { method: 'POST', body: JSON.stringify({ category: currentQuizCategory, order }) });
-      if (res.success) quizData = res.data;
-    }
-
-    async function loadQuizInitialProducts() {
-      const container = document.getElementById('quizSearchResults');
-      if (!currentQuizCategory) { container.innerHTML = ''; return; }
-      container.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div>Carregando...</div>';
-      const data = await api('products&search=');
-      if (!data.nodes?.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">📦</div>Nenhum produto</div>'; return; }
-      renderQuizProductList(data.nodes);
-    }
-
-    function debounceQuizSearch() { clearTimeout(quizSearchTimeout); quizSearchTimeout = setTimeout(() => quizSearchProducts(), 300); }
-
-    async function quizSearchProducts() {
-      const search = document.getElementById('quizSearchInput').value.trim();
-      const container = document.getElementById('quizSearchResults');
-      if (!currentQuizCategory) { container.innerHTML = '<div class="empty">Selecione uma combinação primeiro</div>'; return; }
-      container.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div>Buscando...</div>';
-      const data = await api(`products&search=${encodeURIComponent(search)}`);
-      if (!data.nodes?.length) { container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div>Nenhum encontrado</div>'; return; }
-      renderQuizProductList(data.nodes);
-    }
-
-    function renderQuizProductList(products) {
-      const container = document.getElementById('quizSearchResults');
-      const selected = quizData[currentQuizCategory] || [];
-      container.innerHTML = products.map(p => {
-        const isSelected = selected.some(s => s.handle === p.handle);
-        const price = p.priceRangeV2?.minVariantPrice;
-        const productData = JSON.stringify({title: p.title, handle: p.handle, image: p.featuredImage?.url, price: price?.amount, currency: price?.currencyCode, variantId: p.variants?.nodes?.[0]?.id}).replace(/'/g, "&#39;");
-        return `<div class="item"><img src="${p.featuredImage?.url || 'https://placehold.co/48/1e293b/64748b?text=?'}" alt=""><div class="info"><h4>${p.title}</h4><span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span></div>${isSelected ? '<button class="btn-disabled" disabled>✓</button>' : `<button class="btn-add" onclick='addQuizProduct(${productData})'>+</button>`}</div>`;
-      }).join('');
-    }
-
-    async function addQuizProduct(product) {
-      const res = await api('quiz-save', { method: 'POST', body: JSON.stringify({ category: currentQuizCategory, product }) });
-      if (res.success) { 
-        quizData = res.data; 
-        renderQuizSelected(); 
-        loadQuizInitialProducts();
+      const tbody = document.getElementById('quizStatsTable');
+      if (stats.products?.length) {
+        tbody.innerHTML = stats.products.slice(0, 15).map(p => {
+          const pRate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
+          return `<tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-blue">${p.clicks}</span></td><td><span class="badge badge-green">${p.addToCart}</span></td><td><span class="badge badge-purple">${pRate}%</span></td></tr>`;
+        }).join('');
       } else {
-        alert('Erro ao adicionar: ' + (res.error || 'Desconhecido'));
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:2rem;">Nenhum dado ainda</td></tr>';
       }
-    }
-
-    async function removeQuizProduct(handle) {
-      const res = await api(`quiz-remove&category=${currentQuizCategory}&handle=${encodeURIComponent(handle)}`, { method: 'DELETE' });
-      if (res.success) { 
-        quizData = res.data; 
-        renderQuizSelected(); 
-        loadQuizInitialProducts();
-      } else {
-        alert('Erro ao remover: ' + (res.error || 'Desconhecido'));
-      }
-    }
-
-    async function seedQuizData() {
-      if (!confirm('Isso vai pré-popular o quiz com os produtos configurados no frontend atual. Continuar?')) return;
-      const btn = document.querySelector('.seed-btn');
-      btn.textContent = '⏳ Carregando (pode demorar)...';
-      btn.disabled = true;
-      try {
-        const res = await api('quiz-seed', { method: 'POST' });
-        if (res.success) {
-          alert(`Quiz pré-populado!\n\nProdutos encontrados: ${res.productsFound} de ${res.totalHandles}`);
-          loadQuizData();
-        } else {
-          alert('Erro ao pré-popular: ' + (res.error || 'Desconhecido'));
-        }
-      } catch (e) {
-        alert('Erro de conexão: ' + e.message);
-      }
-      btn.textContent = '🌱 Pré-popular com dados atuais';
-      btn.disabled = false;
     }
   </script>
 </body>
