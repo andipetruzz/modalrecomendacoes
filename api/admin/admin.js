@@ -1,23 +1,11 @@
 import { Redis } from '@upstash/redis';
 
-// DEBUG: Log env vars
-console.log('ENV CHECK:', {
-  hasKvUrl: !!process.env.KV_REST_API_URL,
-  hasKvToken: !!process.env.KV_REST_API_TOKEN,
-  hasShopifyStoreBR: !!process.env.SHOPIFY_STORE,
-  hasShopifyTokenBR: !!process.env.SHOPIFY_ADMIN_TOKEN,
-  hasShopifyStoreGlobal: !!process.env.SHOPIFY_STORE_GLOBAL,
-  hasShopifyTokenGlobal: !!process.env.SHOPIFY_ADMIN_TOKEN_GLOBAL,
-  hasAdminPass: !!process.env.ADMIN_PASS,
-});
-
 let redis;
 try {
   redis = new Redis({
     url: process.env.KV_REST_API_URL,
     token: process.env.KV_REST_API_TOKEN,
   });
-  console.log('Redis initialized successfully');
 } catch (e) {
   console.error('Redis init error:', e.message);
 }
@@ -58,7 +46,6 @@ function getStoreConfig(store) {
 // Shopify GraphQL
 async function shopifyGraphQL(store, query, variables = {}) {
   const config = getStoreConfig(store);
-  console.log('Shopify GraphQL call to:', config.shopifyStore);
   const res = await fetch(`https://${config.shopifyStore}/admin/api/2024-10/graphql.json`, {
     method: 'POST',
     headers: {
@@ -73,42 +60,32 @@ async function shopifyGraphQL(store, query, variables = {}) {
 // Verifica auth (apenas senha)
 function checkAuth(req) {
   const auth = req.headers.get('authorization');
-  console.log('Auth header present:', !!auth);
   if (!auth) return false;
   try {
     const decoded = atob(auth.split(' ')[1]);
-    // Basic Auth formato: "usuario:senha" - pegamos só a senha (depois do :)
     const pass = decoded.includes(':') ? decoded.split(':')[1] : decoded;
-    console.log('Password check:', pass === process.env.ADMIN_PASS);
     return pass === process.env.ADMIN_PASS;
-  } catch (e) {
-    console.error('Auth decode error:', e.message);
+  } catch {
     return false;
   }
 }
 
 export default async function handler(req) {
-  console.log('Request received:', req.method, req.url);
-  
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204 });
   }
 
   if (!checkAuth(req)) {
-    console.log('Auth failed - returning 401');
     return new Response(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'Content-Type': 'application/json', 'WWW-Authenticate': 'Basic' },
     });
   }
 
-  console.log('Auth passed');
   const url = new URL(req.url);
   const action = url.searchParams.get('action');
-  const store = url.searchParams.get('store') || 'br'; // Default: Brasil
+  const store = url.searchParams.get('store') || 'br';
   const config = getStoreConfig(store);
-  
-  console.log('Action:', action, 'Store:', store);
 
   try {
     // GET ?action=stores - Lista lojas disponíveis
@@ -158,7 +135,6 @@ export default async function handler(req) {
       });
 
       if (errors) {
-        console.error('Shopify errors:', errors);
         return new Response(JSON.stringify({ error: errors[0]?.message }), {
           status: 500,
           headers: { 'Content-Type': 'application/json' },
@@ -272,8 +248,8 @@ export default async function handler(req) {
     });
 
   } catch (error) {
-    console.error('HANDLER ERROR:', error.message, error.stack);
-    return new Response(JSON.stringify({ error: error.message, stack: error.stack }), {
+    console.error('Handler error:', error.message);
+    return new Response(JSON.stringify({ error: 'Internal error' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
