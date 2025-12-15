@@ -21,7 +21,8 @@ const STORE_KEYS = {
 };
 
 function isOriginAllowed(origin) {
-  if (!origin) return false;
+  // Se não tem origin (navegação direta, server-side, etc), permite
+  if (!origin) return true;
   return ALLOWED_ORIGINS.some(allowed => {
     if (typeof allowed === 'string') return allowed === origin;
     if (allowed instanceof RegExp) return allowed.test(origin);
