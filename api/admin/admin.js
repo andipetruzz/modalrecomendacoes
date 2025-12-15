@@ -59,12 +59,23 @@ const STORES = {
       'Bassists', 'Producers', 'DJs', 'Gamers',
       'Sound: Deep Bass', 'Sound: Balanced', 'Sound: Energetic'
     ],
-    quizCategories: []
+    quizCategories: [
+      'stage-guitar-male', 'stage-bass-male', 'stage-drums-male',
+      'stage-keyboard-male', 'stage-vocal-male', 'stage-other-male',
+      'stage-guitar-female', 'stage-bass-female', 'stage-drums-female',
+      'stage-keyboard-female', 'stage-vocal-female', 'stage-other-female',
+      'casual-balanced', 'casual-bass', 'casual-energetic',
+      'mixing-electronic', 'mixing-rock', 'mixing-hiphop', 'mixing-classical',
+      'mixing-pop', 'mixing-gospel', 'mixing-various',
+      'audiovisual-editing', 'audiovisual-streaming', 'audiovisual-cinema', 'audiovisual-animation',
+      'games-fps', 'games-rpg', 'games-moba', 'games-casual'
+    ]
   }
 };
 
 // Labels amigáveis para quiz
 const QUIZ_LABELS = {
+  // BR
   'retorno-guitarra-masculino': '🎸 Retorno › Guitarra › Masculino',
   'retorno-baixo-masculino': '🎸 Retorno › Baixo › Masculino',
   'retorno-bateria-masculino': '🥁 Retorno › Bateria › Masculino',
@@ -94,6 +105,37 @@ const QUIZ_LABELS = {
   'games-fps': '🎯 Games › FPS/Competitivo',
   'games-rpg': '⚔️ Games › RPG/Aventura',
   'games-moba': '🏰 Games › MOBA/Estratégia',
+  'games-casual': '🎮 Games › Casual',
+  // Global (English)
+  'stage-guitar-male': '🎸 Stage › Guitar › Male',
+  'stage-bass-male': '🎸 Stage › Bass › Male',
+  'stage-drums-male': '🥁 Stage › Drums › Male',
+  'stage-keyboard-male': '🎹 Stage › Keyboard › Male',
+  'stage-vocal-male': '🎤 Stage › Vocal › Male',
+  'stage-other-male': '🎶 Stage › Other › Male',
+  'stage-guitar-female': '🎸 Stage › Guitar › Female',
+  'stage-bass-female': '🎸 Stage › Bass › Female',
+  'stage-drums-female': '🥁 Stage › Drums › Female',
+  'stage-keyboard-female': '🎹 Stage › Keyboard › Female',
+  'stage-vocal-female': '🎤 Stage › Vocal › Female',
+  'stage-other-female': '🎶 Stage › Other › Female',
+  'casual-balanced': '🎵 Casual › Balanced',
+  'casual-bass': '🔊 Casual › Deep Bass',
+  'casual-energetic': '⚡ Casual › Energetic',
+  'mixing-electronic': '🎛️ Mixing › Electronic',
+  'mixing-rock': '🤘 Mixing › Rock/Metal',
+  'mixing-hiphop': '🎤 Mixing › Hip Hop',
+  'mixing-classical': '🎻 Mixing › Classical',
+  'mixing-pop': '🎵 Mixing › Pop',
+  'mixing-gospel': '🙏 Mixing › Gospel',
+  'mixing-various': '🎶 Mixing › Various',
+  'audiovisual-editing': '✂️ Audiovisual › Editing',
+  'audiovisual-streaming': '📡 Audiovisual › Streaming',
+  'audiovisual-cinema': '🎥 Audiovisual › Cinema',
+  'audiovisual-animation': '🎨 Audiovisual › Animation',
+  'games-fps': '🎯 Games › FPS/Competitive',
+  'games-rpg': '⚔️ Games › RPG/Adventure',
+  'games-moba': '🏰 Games › MOBA/Strategy',
   'games-casual': '🎮 Games › Casual'
 };
 
@@ -541,7 +583,8 @@ export default async function handler(req) {
 
     // POST ?action=quiz-seed - Pré-popula quiz com dados iniciais
     if (action === 'quiz-seed' && req.method === 'POST') {
-      const initialData = {
+      // Dados BR
+      const initialDataBR = {
         // Retorno - Masculino
         'retorno-guitarra-masculino': ['kz-as16-pro', 'kz-castor-pro'],
         'retorno-baixo-masculino': ['kz-zar', 'kz-castor-pro'],
@@ -579,6 +622,49 @@ export default async function handler(req) {
         'games-moba': ['kz-edx-pro-gamer', 'kz-zs10-pro-2-gamer-lancamento-2024', 'kz-sora-5-4-fone-bluetooth-com-cancelamento-de-ruido'],
         'games-casual': ['kz-edx-pro-gamer', 'kz-zs10-pro-2-gamer-lancamento-2024', 'kz-sora-5-4-fone-bluetooth-com-cancelamento-de-ruido']
       };
+
+      // Dados Global (English)
+      const initialDataGlobal = {
+        // Stage - Male
+        'stage-guitar-male': ['kz-as16-pro-16-balanced-drivers-iem-earphones', 'new-kz-castor-pro'],
+        'stage-bass-male': ['kz-zar-16-drivers-iem-earphones', 'new-kz-castor-pro'],
+        'stage-drums-male': ['new-kz-zsx-pro-12-drivers-iem-earphones', 'new-kz-castor-pro'],
+        'stage-keyboard-male': ['kz-as16-pro-16-balanced-drivers-iem-earphones', 'new-kz-d-fi-precision-tuned-iem-earphones'],
+        'stage-vocal-male': ['kz-za12-new-professional-12-drivers-hybrid-earphones', 'kz-zsn-pro-2'],
+        'stage-other-male': ['kz-as16-pro-16-balanced-drivers-iem-earphones', 'new-kz-castor-pro'],
+        // Stage - Female
+        'stage-guitar-female': ['kz-zs10-pro-2', 'new-kz-castor-pro'],
+        'stage-bass-female': ['kz-zs10-pro-2', 'kz-castor-hybrid-iem-earphone'],
+        'stage-drums-female': ['kz-zs10-pro-2', 'kz-castor-hybrid-iem-earphone'],
+        'stage-keyboard-female': ['kz-zs10-pro-2', 'kz-zna-12mm'],
+        'stage-vocal-female': ['kz-zs10-pro-2', 'kz-zsn-pro-2'],
+        'stage-other-female': ['kz-zs10-pro-2', 'new-kz-castor-pro'],
+        // Casual
+        'casual-balanced': ['kz-zsn-pro-2', 'new-kz-castor-pro', 'new-kz-carol-anc-true-wireless-earphone'],
+        'casual-bass': ['kz-castor-hybrid-iem-earphone', 'kz-zsx-12-drivers-iem-earphones', 'kz-sa08-pro-tws-true-wireless-bluetooth-5-2'],
+        'casual-energetic': ['kz-zs10-pro-x', 'kz-zsn-pro-x-dual-driver-iem-earphones', 'kz-sks-hybrid-wireless-earphones-5-2'],
+        // Mixing
+        'mixing-electronic': ['new-kz-sonata-28ba-units-hifi-iem-earphones', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        'mixing-rock': ['new-kz-sonata-28ba-units-hifi-iem-earphones', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        'mixing-hiphop': ['new-kz-as24-pro-24-ba-units-hifi-earphones', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        'mixing-classical': ['new-kz-sonata-28ba-units-hifi-iem-earphones', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        'mixing-pop': ['new-kz-sonata-28ba-units-hifi-iem-earphones', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        'mixing-gospel': ['new-kz-as24-pro-24-ba-units-hifi-earphones', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        'mixing-various': ['new-kz-as24-pro-24-ba-units-hifi-earphones', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        // Audiovisual
+        'audiovisual-editing': ['kz-as16-pro-16-balanced-drivers-iem-earphones', 'kz-zsn-pro-2'],
+        'audiovisual-streaming': ['kz-zsn-pro-2', 'kz-zna-12mm'],
+        'audiovisual-cinema': ['kz-as16-pro-16-balanced-drivers-iem-earphones', 'kz-zna-12mm'],
+        'audiovisual-animation': ['kz-zna-12mm', 'kz-as16-pro-16-balanced-drivers-iem-earphones'],
+        // Games
+        'games-fps': ['kz-edx-pro-dynamic-driver-gaming-earphones', 'new-kz-zs10-pro-2-gaming-earphones', 'kz-sora-tws-anc-bluetooth-5-4'],
+        'games-rpg': ['kz-edx-pro-dynamic-driver-gaming-earphones', 'kz-zsn-pro-x-dual-driver-gaming-earphones', 'kz-sora-tws-anc-bluetooth-5-4'],
+        'games-moba': ['kz-edx-pro-dynamic-driver-gaming-earphones', 'new-kz-zs10-pro-2-gaming-earphones', 'kz-sora-tws-anc-bluetooth-5-4'],
+        'games-casual': ['kz-edx-pro-dynamic-driver-gaming-earphones', 'new-kz-zs10-pro-2-gaming-earphones', 'kz-sora-tws-anc-bluetooth-5-4']
+      };
+
+      // Seleciona dados baseado na loja
+      const initialData = store === 'global' ? initialDataGlobal : initialDataBR;
 
       // Coleta todos os handles únicos
       const allHandles = [...new Set(Object.values(initialData).flat())];
