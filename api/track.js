@@ -16,7 +16,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 // Eventos válidos
-const VALID_EVENTS = ['view', 'click', 'add_to_cart'];
+const VALID_EVENTS = ['view', 'click', 'add_to_cart', 'quiz_start', 'quiz_complete', 'quiz_click', 'quiz_atc'];
 
 // Lojas válidas
 const VALID_STORES = ['br', 'global'];
@@ -105,6 +105,34 @@ export default async function handler(req) {
         redis.incr(`${prefix}:add_to_cart`),
         redis.hincrby(`${prefix}:product_atc`, safeHandle, 1),
         redis.hset(`${prefix}:product_titles`, { [safeHandle]: safeTitle || safeHandle }),
+      ]);
+    }
+
+    // ==================== QUIZ EVENTS ====================
+    
+    // Quiz iniciado
+    if (event === 'quiz_start') {
+      await redis.incr(`${prefix}:quiz:starts`);
+    }
+    
+    // Quiz completado
+    if (event === 'quiz_complete') {
+      await redis.incr(`${prefix}:quiz:completions`);
+    }
+    
+    // Clique em produto do quiz (Ver Detalhes)
+    if (event === 'quiz_click' && safeHandle) {
+      await Promise.all([
+        redis.hincrby(`${prefix}:quiz:product_clicks`, safeHandle, 1),
+        redis.hset(`${prefix}:quiz:product_titles`, { [safeHandle]: safeTitle || safeHandle }),
+      ]);
+    }
+    
+    // Add to cart do quiz
+    if (event === 'quiz_atc' && safeHandle) {
+      await Promise.all([
+        redis.hincrby(`${prefix}:quiz:product_atc`, safeHandle, 1),
+        redis.hset(`${prefix}:quiz:product_titles`, { [safeHandle]: safeTitle || safeHandle }),
       ]);
     }
 
