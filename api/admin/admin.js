@@ -168,6 +168,7 @@ export default async function handler(req) {
               id
               title
               handle
+              descriptionHtml
               featuredImage { url }
               priceRangeV2 { minVariantPrice { amount, currencyCode } }
               variants(first: 1) { nodes { id } }
@@ -343,6 +344,7 @@ export default async function handler(req) {
           price: product.price,
           currency: product.currency,
           variantId: product.variantId,
+          description: product.description || '',
         });
         await redis.set(config.quizKey, data);
       }
@@ -475,6 +477,7 @@ export default async function handler(req) {
               id
               title
               handle
+              descriptionHtml
               featuredImage { url }
               priceRangeV2 { minVariantPrice { amount, currencyCode } }
               variants(first: 1) { nodes { id } }
@@ -486,6 +489,8 @@ export default async function handler(req) {
           const { data } = await shopifyGraphQL(store, query, { handle });
           if (data?.productByHandle) {
             const p = data.productByHandle;
+            // Limpa HTML e trunca descrição
+            const cleanDesc = (p.descriptionHtml || '').replace(/<[^>]*>/g, '').substring(0, 120);
             productsMap[p.handle] = {
               name: p.title,
               handle: p.handle,
@@ -493,6 +498,7 @@ export default async function handler(req) {
               price: p.priceRangeV2?.minVariantPrice?.amount,
               currency: p.priceRangeV2?.minVariantPrice?.currencyCode,
               variantId: p.variants?.nodes?.[0]?.id,
+              description: cleanDesc + (cleanDesc.length >= 120 ? '...' : ''),
             };
           }
         } catch (e) {
