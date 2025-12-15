@@ -24,10 +24,17 @@
     .hidden { display: none !important; }
 
     .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 1rem; }
     .header-left { display: flex; align-items: center; gap: 1rem; }
     .header-left .logo { font-size: 2rem; }
     header h1 { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #0ea5e9, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .store-selector { display: flex; gap: 0.5rem; background: rgba(51, 65, 85, 0.5); padding: 0.25rem; border-radius: 10px; }
+    .store-btn { padding: 0.6rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.875rem; font-weight: 600; transition: all 0.2s; background: transparent; color: #94a3b8; }
+    .store-btn:hover { color: #e2e8f0; }
+    .store-btn.active { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .store-btn.active.global { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    .store-btn .flag { margin-right: 0.4rem; }
     .logout { padding: 0.75rem 1.5rem; background: rgba(51, 65, 85, 0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e2e8f0; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; }
     .logout:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); color: #f87171; }
 
@@ -120,7 +127,17 @@
         <span class="logo">🎧</span>
         <h1>KZ Recomendações</h1>
       </div>
-      <button class="logout" onclick="logout()">Sair</button>
+      <div class="header-right">
+        <div class="store-selector">
+          <button class="store-btn active" data-store="br" onclick="switchStore('br')">
+            <span class="flag">🇧🇷</span> Brasil
+          </button>
+          <button class="store-btn" data-store="global" onclick="switchStore('global')">
+            <span class="flag">🌍</span> Global
+          </button>
+        </div>
+        <button class="logout" onclick="logout()">Sair</button>
+      </div>
     </header>
 
     <div class="stats">
@@ -187,10 +204,22 @@
     let auth = localStorage.getItem('kz_rec_auth') || '';
     let recommendations = {};
     let currentCategory = '';
+    let currentStore = 'br';
     let searchTimeout = null;
-    const CATEGORIES = ['Guitarristas','Bateristas','Tecladistas','Cantores','Baixistas','Produtores','DJs','Gamers'];
-    const SOM_CATEGORIES = ['Som: Graves Potentes','Som: Equilibrado','Som: Energético'];
-    const ALL_CATEGORIES = [...CATEGORIES, ...SOM_CATEGORIES];
+    
+    // Categorias por loja
+    const STORE_CONFIG = {
+      br: {
+        categories: ['Guitarristas','Bateristas','Tecladistas','Cantores','Baixistas','Produtores','DJs','Gamers'],
+        somCategories: ['Som: Graves Potentes','Som: Equilibrado','Som: Energético'],
+        somLabel: '🎧 Estilo de Som:'
+      },
+      global: {
+        categories: ['Guitarists','Drummers','Keyboardists','Singers','Bassists','Producers','DJs','Gamers'],
+        somCategories: ['Sound: Deep Bass','Sound: Balanced','Sound: Energetic'],
+        somLabel: '🎧 Sound Style:'
+      }
+    };
 
     if (auth) {
       document.getElementById('loginOverlay').classList.add('hidden');
@@ -202,7 +231,7 @@
       const pass = document.getElementById('password').value;
       auth = btoa(pass);
       try {
-        const res = await fetch('/api/admin/admin?action=stats', { headers: { 'Authorization': `Basic ${auth}` }});
+        const res = await fetch(`/api/admin/admin?action=stats&store=${currentStore}`, { headers: { 'Authorization': `Basic ${auth}` }});
         if (res.ok) {
           localStorage.setItem('kz_rec_auth', auth);
           document.getElementById('loginOverlay').classList.add('hidden');
@@ -216,8 +245,24 @@
 
     function logout() { localStorage.removeItem('kz_rec_auth'); location.reload(); }
 
+    function switchStore(store) {
+      currentStore = store;
+      currentCategory = '';
+      
+      // Atualiza botões
+      document.querySelectorAll('.store-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.store === store) {
+          btn.classList.add('active');
+          if (store === 'global') btn.classList.add('global');
+        }
+      });
+      
+      loadData();
+    }
+
     async function api(action, options = {}) {
-      const res = await fetch(`/api/admin/admin?action=${action}`, {
+      const res = await fetch(`/api/admin/admin?action=${action}&store=${currentStore}`, {
         ...options,
         headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }
       });
@@ -249,26 +294,31 @@
 
       recommendations = recs || {};
       renderCategoryTabs();
-      if (!currentCategory) selectCategory(CATEGORIES[0]);
+      const config = STORE_CONFIG[currentStore];
+      if (!currentCategory || ![...config.categories, ...config.somCategories].includes(currentCategory)) {
+        selectCategory(config.categories[0]);
+      }
       loadInitialProducts();
     }
 
     function renderCategoryTabs() {
-      const mainTabs = CATEGORIES.map(cat => {
+      const config = STORE_CONFIG[currentStore];
+      
+      const mainTabs = config.categories.map(cat => {
         const count = recommendations[cat]?.length || 0;
         return `<button class="cat-tab ${currentCategory === cat ? 'active' : ''}" onclick="selectCategory('${cat}')">${cat}<span class="count">${count}</span></button>`;
       }).join('');
       
-      const somTabs = SOM_CATEGORIES.map(cat => {
+      const somTabs = config.somCategories.map(cat => {
         const count = recommendations[cat]?.length || 0;
-        const label = cat.replace('Som: ', '');
+        const label = cat.replace('Som: ', '').replace('Sound: ', '');
         return `<button class="cat-tab som-tab ${currentCategory === cat ? 'active' : ''}" onclick="selectCategory('${cat}')">${label}<span class="count">${count}</span></button>`;
       }).join('');
       
       document.getElementById('categoryTabs').innerHTML = `
         ${mainTabs}
         <div style="width:100%;margin:0.5rem 0;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.1);">
-          <span style="font-size:0.7rem;color:#64748b;margin-right:0.5rem;">🎧 Estilo de Som:</span>
+          <span style="font-size:0.7rem;color:#64748b;margin-right:0.5rem;">${config.somLabel}</span>
           ${somTabs}
         </div>
       `;
