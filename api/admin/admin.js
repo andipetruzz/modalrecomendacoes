@@ -270,22 +270,31 @@ export default async function handler(req) {
     if (action === 'stats') {
       const prefix = config.statsPrefix;
       const [views, clicks, addToCart, productClicks, productAtc, productTitles] = await Promise.all([
-        redis.get(`${prefix}:views`) || 0,
-        redis.get(`${prefix}:clicks`) || 0,
-        redis.get(`${prefix}:add_to_cart`) || 0,
-        redis.hgetall(`${prefix}:product_clicks`) || {},
-        redis.hgetall(`${prefix}:product_atc`) || {},
-        redis.hgetall(`${prefix}:product_titles`) || {},
+        redis.get(`${prefix}:views`),
+        redis.get(`${prefix}:clicks`),
+        redis.get(`${prefix}:add_to_cart`),
+        redis.hgetall(`${prefix}:product_clicks`),
+        redis.hgetall(`${prefix}:product_atc`),
+        redis.hgetall(`${prefix}:product_titles`),
       ]);
 
-      const products = Object.entries(productClicks).map(([handle, clickCount]) => ({
+      const clicksObj = productClicks || {};
+      const atcObj = productAtc || {};
+      const titlesObj = productTitles || {};
+
+      const products = Object.entries(clicksObj).map(([handle, clickCount]) => ({
         handle,
-        title: productTitles[handle] || handle,
+        title: titlesObj[handle] || handle,
         clicks: parseInt(clickCount) || 0,
-        addToCart: parseInt(productAtc[handle]) || 0,
+        addToCart: parseInt(atcObj[handle]) || 0,
       })).sort((a, b) => b.clicks - a.clicks);
 
-      return new Response(JSON.stringify({ views, clicks, addToCart, products }), {
+      return new Response(JSON.stringify({ 
+        views: views || 0, 
+        clicks: clicks || 0, 
+        addToCart: addToCart || 0, 
+        products 
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
@@ -316,7 +325,7 @@ export default async function handler(req) {
       const { category, product } = await req.json();
       
       if (!config.quizCategories.includes(category)) {
-        return new Response(JSON.stringify({ error: 'Categoria inválida' }), {
+        return new Response(JSON.stringify({ error: 'Categoria inválida: ' + category }), {
           status: 400,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -379,28 +388,39 @@ export default async function handler(req) {
     if (action === 'quiz-stats') {
       const prefix = config.statsPrefix;
       const [starts, completions, productClicks, productAtc, productTitles] = await Promise.all([
-        redis.get(`${prefix}:quiz:starts`) || 0,
-        redis.get(`${prefix}:quiz:completions`) || 0,
-        redis.hgetall(`${prefix}:quiz:product_clicks`) || {},
-        redis.hgetall(`${prefix}:quiz:product_atc`) || {},
-        redis.hgetall(`${prefix}:quiz:product_titles`) || {},
+        redis.get(`${prefix}:quiz:starts`),
+        redis.get(`${prefix}:quiz:completions`),
+        redis.hgetall(`${prefix}:quiz:product_clicks`),
+        redis.hgetall(`${prefix}:quiz:product_atc`),
+        redis.hgetall(`${prefix}:quiz:product_titles`),
       ]);
 
-      const products = Object.entries(productClicks).map(([handle, clickCount]) => ({
+      const clicksObj = productClicks || {};
+      const atcObj = productAtc || {};
+      const titlesObj = productTitles || {};
+
+      const products = Object.entries(clicksObj).map(([handle, clickCount]) => ({
         handle,
-        title: productTitles[handle] || handle,
+        title: titlesObj[handle] || handle,
         clicks: parseInt(clickCount) || 0,
-        addToCart: parseInt(productAtc[handle]) || 0,
+        addToCart: parseInt(atcObj[handle]) || 0,
       })).sort((a, b) => b.clicks - a.clicks);
 
-      const completionRate = starts > 0 ? ((completions / starts) * 100).toFixed(1) : '0';
+      const startsNum = parseInt(starts) || 0;
+      const completionsNum = parseInt(completions) || 0;
+      const completionRate = startsNum > 0 ? ((completionsNum / startsNum) * 100).toFixed(1) : '0';
 
-      return new Response(JSON.stringify({ starts, completions, completionRate, products }), {
+      return new Response(JSON.stringify({ 
+        starts: startsNum, 
+        completions: completionsNum, 
+        completionRate, 
+        products 
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    // POST ?action=quiz-seed - Pré-popula quiz com dados iniciais (handles apenas)
+    // POST ?action=quiz-seed - Pré-popula quiz com dados iniciais
     if (action === 'quiz-seed' && req.method === 'POST') {
       const initialData = {
         // Retorno - Masculino
@@ -441,12 +461,17 @@ export default async function handler(req) {
         'games-casual': ['kz-edx-pro-gamer', 'kz-zs10-pro-2-gamer-lancamento-2024', 'kz-sora-5-4-fone-bluetooth-com-cancelamento-de-ruido']
       };
 
-      // Busca dados de cada produto na Shopify
+      // Coleta todos os handles únicos
       const allHandles = [...new Set(Object.values(initialData).flat())];
-      const query = `
-        query ($handles: [String!]!) {
-          products(first: 100, query: "") {
-            nodes {
+      
+      // Busca produtos em lotes (Shopify limita a query)
+      const productsMap = {};
+      
+      // Busca cada produto individualmente pelo handle
+      for (const handle of allHandles) {
+        const query = `
+          query ($handle: String!) {
+            productByHandle(handle: $handle) {
               id
               title
               handle
@@ -455,23 +480,24 @@ export default async function handler(req) {
               variants(first: 1) { nodes { id } }
             }
           }
+        `;
+        
+        try {
+          const { data } = await shopifyGraphQL(store, query, { handle });
+          if (data?.productByHandle) {
+            const p = data.productByHandle;
+            productsMap[p.handle] = {
+              name: p.title,
+              handle: p.handle,
+              image: p.featuredImage?.url,
+              price: p.priceRangeV2?.minVariantPrice?.amount,
+              currency: p.priceRangeV2?.minVariantPrice?.currencyCode,
+              variantId: p.variants?.nodes?.[0]?.id,
+            };
+          }
+        } catch (e) {
+          console.error(`Failed to fetch product ${handle}:`, e.message);
         }
-      `;
-      
-      const { data: shopifyData } = await shopifyGraphQL(store, query, { handles: allHandles });
-      const productsMap = {};
-      
-      if (shopifyData?.products?.nodes) {
-        shopifyData.products.nodes.forEach(p => {
-          productsMap[p.handle] = {
-            name: p.title,
-            handle: p.handle,
-            image: p.featuredImage?.url,
-            price: p.priceRangeV2?.minVariantPrice?.amount,
-            currency: p.priceRangeV2?.minVariantPrice?.currencyCode,
-            variantId: p.variants?.nodes?.[0]?.id,
-          };
-        });
       }
 
       // Monta dados finais do quiz
@@ -484,7 +510,12 @@ export default async function handler(req) {
 
       await redis.set(config.quizKey, quizData);
 
-      return new Response(JSON.stringify({ success: true, data: quizData, productsFound: Object.keys(productsMap).length }), {
+      return new Response(JSON.stringify({ 
+        success: true, 
+        data: quizData, 
+        productsFound: Object.keys(productsMap).length,
+        totalHandles: allHandles.length
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
@@ -496,7 +527,7 @@ export default async function handler(req) {
 
   } catch (error) {
     console.error('Handler error:', error.message);
-    return new Response(JSON.stringify({ error: 'Internal error' }), {
+    return new Response(JSON.stringify({ error: 'Internal error: ' + error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
