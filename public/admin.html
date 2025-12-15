@@ -20,152 +20,161 @@
     .login-box input:focus { outline: none; border-color: #0ea5e9; }
     .login-box button { width: 100%; padding: 1rem; background: #0ea5e9; border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; }
     .login-box button:hover { background: #0284c7; }
-    .login-error { color: #f87171; font-size: 0.875rem; margin-bottom: 1rem; padding: 0.75rem; background: rgba(248, 113, 113, 0.1); border-radius: 8px; }
+    .login-error { color: #f87171; font-size: 0.875rem; margin-bottom: 1rem; }
     .hidden { display: none !important; }
 
-    /* Layout Principal */
+    /* Layout */
     .app { display: flex; min-height: 100vh; }
     
     /* Sidebar */
-    .sidebar { width: 260px; background: #1e293b; border-right: 1px solid #334155; padding: 1.5rem; display: flex; flex-direction: column; }
-    .sidebar-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid #334155; }
-    .sidebar-header .logo { font-size: 1.75rem; }
-    .sidebar-header h1 { font-size: 1.25rem; font-weight: 700; color: #f1f5f9; }
+    .sidebar { width: 240px; background: #1e293b; border-right: 1px solid #334155; padding: 1.5rem; display: flex; flex-direction: column; }
+    .sidebar-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid #334155; }
+    .sidebar-header .logo { font-size: 1.5rem; }
+    .sidebar-header h1 { font-size: 1.1rem; font-weight: 700; }
     
-    .store-switch { display: flex; background: #0f172a; border-radius: 10px; padding: 4px; margin-bottom: 1.5rem; }
-    .store-switch button { flex: 1; padding: 0.6rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 600; background: transparent; color: #64748b; transition: all 0.2s; }
+    .store-switch { display: flex; background: #0f172a; border-radius: 8px; padding: 3px; margin-bottom: 1.5rem; }
+    .store-switch button { flex: 1; padding: 0.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; background: transparent; color: #64748b; }
     .store-switch button.active { background: #10b981; color: white; }
     .store-switch button.active.global { background: #8b5cf6; }
     
     .nav-section { margin-bottom: 1.5rem; }
-    .nav-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.75rem; font-weight: 600; }
-    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; border-radius: 10px; cursor: pointer; transition: all 0.2s; color: #94a3b8; font-weight: 500; margin-bottom: 0.25rem; }
+    .nav-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem; font-weight: 600; }
+    .nav-item { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.8rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; color: #94a3b8; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.2rem; }
     .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
     .nav-item.active { background: #0ea5e9; color: white; }
     .nav-item.active.quiz { background: #f59e0b; }
-    .nav-item .icon { font-size: 1.25rem; }
-    .nav-item .badge { margin-left: auto; background: rgba(255,255,255,0.2); padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; }
+    .nav-item .icon { font-size: 1.1rem; }
     
     .sidebar-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid #334155; }
-    .logout-btn { width: 100%; padding: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; color: #f87171; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
-    .logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
+    .logout-btn { width: 100%; padding: 0.6rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: #f87171; cursor: pointer; font-size: 0.8rem; font-weight: 500; }
 
-    /* Main Content */
+    /* Main */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    .main-header { padding: 1.5rem 2rem; border-bottom: 1px solid #334155; background: #1e293b; }
-    .main-header h2 { font-size: 1.5rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.25rem; }
-    .main-header p { color: #64748b; font-size: 0.875rem; }
+    .main-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #334155; background: #1e293b; }
+    .main-header h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.15rem; }
+    .main-header p { color: #64748b; font-size: 0.8rem; }
+    .main-content { flex: 1; overflow-y: auto; padding: 1.5rem; }
     
-    .main-content { flex: 1; overflow-y: auto; padding: 2rem; }
-    
-    /* Página de Edição */
     .editor-page { display: none; }
     .editor-page.active { display: block; }
     
     /* Categories Grid */
-    .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .category-card { background: #1e293b; border: 2px solid #334155; border-radius: 16px; padding: 1.25rem; cursor: pointer; transition: all 0.2s; }
+    .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .category-card { background: #1e293b; border: 2px solid #334155; border-radius: 14px; padding: 1rem; cursor: pointer; transition: all 0.2s; }
     .category-card:hover { border-color: #0ea5e9; transform: translateY(-2px); }
     .category-card.active { border-color: #0ea5e9; background: rgba(14, 165, 233, 0.1); }
     .category-card.quiz:hover { border-color: #f59e0b; }
     .category-card.quiz.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
-    .category-card .cat-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-    .category-card .cat-icon { font-size: 1.5rem; }
-    .category-card .cat-name { font-weight: 600; color: #f1f5f9; font-size: 0.95rem; }
-    .category-card .cat-count { margin-left: auto; background: #334155; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.8rem; color: #94a3b8; }
-    .category-card .cat-products { display: flex; gap: 0.25rem; flex-wrap: wrap; }
-    .category-card .cat-products img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; border: 2px solid #334155; }
-    .category-card .cat-products .more { width: 36px; height: 36px; border-radius: 8px; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #94a3b8; }
+    .category-card .cat-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+    .category-card .cat-icon { font-size: 1.3rem; }
+    .category-card .cat-name { font-weight: 600; font-size: 0.9rem; flex: 1; }
+    .category-card .cat-count { background: #334155; padding: 0.2rem 0.5rem; border-radius: 5px; font-size: 0.75rem; color: #94a3b8; }
+    .category-card .cat-products { display: flex; gap: 0.2rem; flex-wrap: wrap; }
+    .category-card .cat-products img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 2px solid #334155; }
+    .category-card .cat-products .more { width: 32px; height: 32px; border-radius: 6px; background: #334155; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: #94a3b8; }
     
+    /* Quiz Group Card */
+    .quiz-group { background: #1e293b; border: 2px solid #334155; border-radius: 14px; margin-bottom: 1rem; overflow: hidden; }
+    .quiz-group-header { padding: 1rem 1.25rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; transition: background 0.2s; }
+    .quiz-group-header:hover { background: rgba(255,255,255,0.03); }
+    .quiz-group-header .icon { font-size: 1.5rem; }
+    .quiz-group-header .title { font-weight: 600; font-size: 1rem; flex: 1; }
+    .quiz-group-header .count { background: #f59e0b; color: #000; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+    .quiz-group-header .arrow { color: #64748b; font-size: 1.2rem; transition: transform 0.2s; }
+    .quiz-group.expanded .quiz-group-header .arrow { transform: rotate(180deg); }
+    .quiz-group-content { display: none; padding: 0 1rem 1rem; }
+    .quiz-group.expanded .quiz-group-content { display: block; }
+    .quiz-subcategories { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; }
+    .quiz-subcat { background: #0f172a; border: 2px solid #334155; border-radius: 10px; padding: 0.875rem; cursor: pointer; transition: all 0.2s; }
+    .quiz-subcat:hover { border-color: #f59e0b; }
+    .quiz-subcat.active { border-color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+    .quiz-subcat .sub-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .quiz-subcat .sub-icon { font-size: 1rem; }
+    .quiz-subcat .sub-name { font-size: 0.8rem; font-weight: 500; flex: 1; }
+    .quiz-subcat .sub-count { font-size: 0.7rem; color: #64748b; }
+    .quiz-subcat .sub-products { display: flex; gap: 0.15rem; }
+    .quiz-subcat .sub-products img { width: 28px; height: 28px; border-radius: 5px; object-fit: cover; }
+
     /* Editor Panel */
-    .editor-panel { background: #1e293b; border-radius: 20px; border: 1px solid #334155; overflow: hidden; }
-    .editor-panel-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 1rem; }
-    .editor-panel-header .icon { font-size: 1.5rem; }
-    .editor-panel-header h3 { font-size: 1.1rem; font-weight: 600; color: #f1f5f9; }
-    .editor-panel-header .close-btn { margin-left: auto; background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.5rem; padding: 0.25rem; }
-    .editor-panel-header .close-btn:hover { color: #f1f5f9; }
+    .editor-panel { background: #1e293b; border-radius: 16px; border: 1px solid #334155; overflow: hidden; margin-top: 1rem; }
+    .editor-panel-header { padding: 1rem 1.25rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 0.75rem; }
+    .editor-panel-header .icon { font-size: 1.3rem; }
+    .editor-panel-header h3 { font-size: 1rem; font-weight: 600; flex: 1; }
+    .editor-panel-header .close-btn { background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.3rem; }
+    .editor-panel-body { padding: 1.25rem; }
     
-    .editor-panel-body { padding: 1.5rem; }
-    
-    /* Product List in Editor */
-    .product-list-label { font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; }
+    .product-list-label { font-size: 0.75rem; color: #64748b; margin-bottom: 0.6rem; font-weight: 500; }
     .product-list-label .hint { font-weight: 400; color: #475569; }
-    
-    .product-list { min-height: 100px; margin-bottom: 1.5rem; }
-    .product-item { display: flex; align-items: center; gap: 0.75rem; background: #0f172a; padding: 0.75rem; border-radius: 12px; margin-bottom: 0.5rem; border: 1px solid #334155; }
-    .product-item.dragging { opacity: 0.5; }
-    .product-item .drag-handle { color: #475569; cursor: grab; font-size: 1rem; }
-    .product-item img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: #334155; }
+    .product-list { min-height: 80px; margin-bottom: 1.25rem; }
+    .product-item { display: flex; align-items: center; gap: 0.6rem; background: #0f172a; padding: 0.6rem; border-radius: 10px; margin-bottom: 0.4rem; border: 1px solid #334155; }
+    .product-item .drag-handle { color: #475569; cursor: grab; font-size: 0.9rem; }
+    .product-item img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
     .product-item .info { flex: 1; min-width: 0; }
-    .product-item .info h4 { font-size: 0.875rem; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.15rem; }
-    .product-item .info span { font-size: 0.8rem; color: #10b981; font-weight: 500; }
-    .product-item .remove-btn { background: none; border: none; color: #64748b; cursor: pointer; padding: 0.5rem; border-radius: 8px; font-size: 1.1rem; }
+    .product-item .info h4 { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.1rem; }
+    .product-item .info span { font-size: 0.75rem; color: #10b981; font-weight: 500; }
+    .product-item .remove-btn { background: none; border: none; color: #64748b; cursor: pointer; padding: 0.4rem; border-radius: 6px; font-size: 1rem; }
     .product-item .remove-btn:hover { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .empty-list { text-align: center; padding: 1.5rem; color: #475569; font-size: 0.85rem; }
+    .empty-list .icon { font-size: 1.5rem; margin-bottom: 0.3rem; opacity: 0.5; }
     
-    .empty-list { text-align: center; padding: 2rem; color: #475569; }
-    .empty-list .icon { font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.5; }
-    
-    /* Search Section */
-    .search-section { border-top: 1px solid #334155; padding-top: 1.5rem; }
-    .search-box { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-    .search-box input { flex: 1; padding: 0.875rem 1rem; border: 2px solid #334155; border-radius: 12px; background: #0f172a; color: #e2e8f0; font-size: 0.9rem; }
+    .search-section { border-top: 1px solid #334155; padding-top: 1.25rem; }
+    .search-box { display: flex; gap: 0.4rem; margin-bottom: 0.75rem; }
+    .search-box input { flex: 1; padding: 0.7rem 0.9rem; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: #e2e8f0; font-size: 0.85rem; }
     .search-box input:focus { outline: none; border-color: #0ea5e9; }
-    .search-box button { padding: 0.875rem 1.5rem; background: #0ea5e9; border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: 600; }
-    .search-box button:hover { background: #0284c7; }
-    
-    .search-results { max-height: 300px; overflow-y: auto; }
-    .search-item { display: flex; align-items: center; gap: 0.75rem; background: #0f172a; padding: 0.75rem; border-radius: 12px; margin-bottom: 0.5rem; border: 1px solid #334155; }
-    .search-item img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+    .search-box button { padding: 0.7rem 1.2rem; background: #0ea5e9; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+    .search-results { max-height: 250px; overflow-y: auto; }
+    .search-item { display: flex; align-items: center; gap: 0.6rem; background: #0f172a; padding: 0.6rem; border-radius: 10px; margin-bottom: 0.4rem; border: 1px solid #334155; }
+    .search-item img { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; }
     .search-item .info { flex: 1; min-width: 0; }
-    .search-item .info h4 { font-size: 0.8rem; font-weight: 600; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .search-item .info span { font-size: 0.75rem; color: #10b981; }
-    .search-item .add-btn { background: #10b981; border: none; color: white; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; font-weight: 600; }
-    .search-item .add-btn:hover { background: #059669; }
+    .search-item .info h4 { font-size: 0.75rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .search-item .info span { font-size: 0.7rem; color: #10b981; }
+    .search-item .add-btn { background: #10b981; border: none; color: white; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 1rem; }
     .search-item .add-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
 
-    /* Dashboard Page */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card { background: #1e293b; border-radius: 16px; padding: 1.5rem; border: 1px solid #334155; }
-    .stat-card .stat-icon { font-size: 2rem; margin-bottom: 0.75rem; }
-    .stat-card .stat-value { font-size: 2rem; font-weight: 700; color: #0ea5e9; margin-bottom: 0.25rem; }
+    /* Stats */
+    .date-filters { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
+    .date-btn { padding: 0.5rem 1rem; background: #1e293b; border: 1px solid #334155; border-radius: 8px; color: #94a3b8; cursor: pointer; font-size: 0.8rem; font-weight: 500; }
+    .date-btn:hover { border-color: #0ea5e9; color: #e2e8f0; }
+    .date-btn.active { background: #0ea5e9; border-color: #0ea5e9; color: white; }
+    .date-btn.quiz.active { background: #f59e0b; border-color: #f59e0b; color: #000; }
+    .date-input { padding: 0.5rem; background: #1e293b; border: 1px solid #334155; border-radius: 8px; color: #e2e8f0; font-size: 0.8rem; }
+    .date-input:focus { outline: none; border-color: #0ea5e9; }
+    
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card { background: #1e293b; border-radius: 14px; padding: 1.25rem; border: 1px solid #334155; }
+    .stat-card .stat-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .stat-card .stat-value { font-size: 1.75rem; font-weight: 700; color: #0ea5e9; margin-bottom: 0.15rem; }
     .stat-card.quiz .stat-value { color: #f59e0b; }
-    .stat-card .stat-label { font-size: 0.875rem; color: #64748b; }
+    .stat-card .stat-label { font-size: 0.8rem; color: #64748b; }
     
-    .stats-table { background: #1e293b; border-radius: 16px; border: 1px solid #334155; overflow: hidden; }
-    .stats-table-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 0.75rem; }
-    .stats-table-header h3 { font-size: 1rem; font-weight: 600; color: #f1f5f9; }
-    .stats-table-header .refresh-btn { margin-left: auto; background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.2rem; }
-    .stats-table-header .refresh-btn:hover { color: #f1f5f9; }
-    
+    .stats-table { background: #1e293b; border-radius: 14px; border: 1px solid #334155; overflow: hidden; }
+    .stats-table-header { padding: 1rem 1.25rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 0.6rem; }
+    .stats-table-header h3 { font-size: 0.9rem; font-weight: 600; flex: 1; }
+    .stats-table-header .refresh-btn { background: none; border: none; color: #64748b; cursor: pointer; font-size: 1.1rem; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 1rem 1.5rem; text-align: left; }
-    th { background: #0f172a; color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-    td { border-top: 1px solid #334155; color: #e2e8f0; font-size: 0.875rem; }
-    .badge { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    th, td { padding: 0.8rem 1.25rem; text-align: left; }
+    th { background: #0f172a; color: #64748b; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    td { border-top: 1px solid #334155; font-size: 0.8rem; }
+    .badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 5px; font-size: 0.7rem; font-weight: 600; }
     .badge-blue { background: rgba(14, 165, 233, 0.2); color: #38bdf8; }
     .badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; }
     .badge-purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
 
-    /* Seed Button */
-    .seed-section { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
-    .seed-section .icon { font-size: 2rem; }
+    /* Seed */
+    .seed-section { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; }
+    .seed-section .icon { font-size: 1.75rem; }
     .seed-section .text { flex: 1; }
-    .seed-section .text h4 { color: #000; font-weight: 700; margin-bottom: 0.25rem; }
-    .seed-section .text p { color: rgba(0,0,0,0.7); font-size: 0.85rem; }
-    .seed-section button { background: #000; color: #f59e0b; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; }
-    .seed-section button:hover { background: rgba(0,0,0,0.8); }
+    .seed-section .text h4 { color: #000; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.15rem; }
+    .seed-section .text p { color: rgba(0,0,0,0.7); font-size: 0.8rem; }
+    .seed-section button { background: #000; color: #f59e0b; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
     .seed-section button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Responsive */
-    @media (max-width: 900px) {
+    @media (max-width: 800px) {
       .sidebar { display: none; }
-      .app { flex-direction: column; }
     }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #1e293b; }
-    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
   </style>
 </head>
 <body>
@@ -182,7 +191,6 @@
 
   <!-- App -->
   <div class="app hidden" id="app">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <span class="logo">🎧</span>
@@ -223,30 +231,25 @@
       </div>
     </aside>
 
-    <!-- Main Content -->
     <main class="main">
       <header class="main-header">
         <h2 id="pageTitle">Recomendações</h2>
-        <p id="pageDesc">Selecione uma categoria e gerencie os produtos recomendados</p>
+        <p id="pageDesc">Selecione uma categoria para editar os produtos</p>
       </header>
       
       <div class="main-content">
-        <!-- Recommendations Editor -->
+        <!-- Recommendations -->
         <div class="editor-page active" id="page-recommendations">
           <div class="categories-grid" id="recCategoriesGrid"></div>
-          
           <div class="editor-panel hidden" id="recEditorPanel">
             <div class="editor-panel-header">
               <span class="icon" id="recEditorIcon">🎸</span>
-              <h3 id="recEditorTitle">Guitarristas</h3>
+              <h3 id="recEditorTitle">Categoria</h3>
               <button class="close-btn" onclick="closeEditor('rec')">&times;</button>
             </div>
             <div class="editor-panel-body">
-              <div class="product-list-label">
-                Produtos selecionados <span class="hint">(arraste para reordenar)</span>
-              </div>
+              <div class="product-list-label">Produtos selecionados <span class="hint">(arraste para reordenar)</span></div>
               <div class="product-list" id="recProductList"></div>
-              
               <div class="search-section">
                 <div class="search-box">
                   <input type="text" id="recSearchInput" placeholder="Buscar produtos..." oninput="debounceSearch('rec')">
@@ -258,18 +261,18 @@
           </div>
         </div>
 
-        <!-- Quiz Editor -->
+        <!-- Quiz -->
         <div class="editor-page" id="page-quiz">
           <div class="seed-section">
             <span class="icon">🌱</span>
             <div class="text">
               <h4>Pré-popular Quiz</h4>
-              <p>Carrega os produtos configurados no código original do quiz</p>
+              <p>Carrega os produtos do código original</p>
             </div>
             <button id="seedBtn" onclick="seedQuizData()">Carregar</button>
           </div>
           
-          <div class="categories-grid" id="quizCategoriesGrid"></div>
+          <div id="quizGroupsContainer"></div>
           
           <div class="editor-panel hidden" id="quizEditorPanel">
             <div class="editor-panel-header">
@@ -278,11 +281,8 @@
               <button class="close-btn" onclick="closeEditor('quiz')">&times;</button>
             </div>
             <div class="editor-panel-body">
-              <div class="product-list-label">
-                Produtos selecionados <span class="hint">(arraste para reordenar)</span>
-              </div>
+              <div class="product-list-label">Produtos selecionados <span class="hint">(arraste para reordenar)</span></div>
               <div class="product-list" id="quizProductList"></div>
-              
               <div class="search-section">
                 <div class="search-box">
                   <input type="text" id="quizSearchInput" placeholder="Buscar produtos..." oninput="debounceSearch('quiz')">
@@ -294,8 +294,18 @@
           </div>
         </div>
 
-        <!-- Stats Recommendations -->
+        <!-- Stats Rec -->
         <div class="editor-page" id="page-stats-rec">
+          <div class="date-filters" id="recDateFilters">
+            <button class="date-btn active" data-range="all" onclick="setDateFilter('rec', 'all')">Todo período</button>
+            <button class="date-btn" data-range="today" onclick="setDateFilter('rec', 'today')">Hoje</button>
+            <button class="date-btn" data-range="yesterday" onclick="setDateFilter('rec', 'yesterday')">Ontem</button>
+            <button class="date-btn" data-range="7days" onclick="setDateFilter('rec', '7days')">7 dias</button>
+            <button class="date-btn" data-range="30days" onclick="setDateFilter('rec', '30days')">30 dias</button>
+            <input type="date" class="date-input" id="recDateFrom" onchange="setDateFilter('rec', 'custom')">
+            <span style="color:#64748b;">até</span>
+            <input type="date" class="date-input" id="recDateTo" onchange="setDateFilter('rec', 'custom')">
+          </div>
           <div class="stats-grid" id="recStatsGrid"></div>
           <div class="stats-table">
             <div class="stats-table-header">
@@ -312,6 +322,16 @@
 
         <!-- Stats Quiz -->
         <div class="editor-page" id="page-stats-quiz">
+          <div class="date-filters" id="quizDateFilters">
+            <button class="date-btn quiz active" data-range="all" onclick="setDateFilter('quiz', 'all')">Todo período</button>
+            <button class="date-btn quiz" data-range="today" onclick="setDateFilter('quiz', 'today')">Hoje</button>
+            <button class="date-btn quiz" data-range="yesterday" onclick="setDateFilter('quiz', 'yesterday')">Ontem</button>
+            <button class="date-btn quiz" data-range="7days" onclick="setDateFilter('quiz', '7days')">7 dias</button>
+            <button class="date-btn quiz" data-range="30days" onclick="setDateFilter('quiz', '30days')">30 dias</button>
+            <input type="date" class="date-input" id="quizDateFrom" onchange="setDateFilter('quiz', 'custom')">
+            <span style="color:#64748b;">até</span>
+            <input type="date" class="date-input" id="quizDateTo" onchange="setDateFilter('quiz', 'custom')">
+          </div>
           <div class="stats-grid" id="quizStatsGrid"></div>
           <div class="stats-table">
             <div class="stats-table-header">
@@ -330,7 +350,7 @@
   </div>
 
   <script>
-    // ==================== STATE ====================
+    // State
     let auth = localStorage.getItem('kz_admin_auth');
     let currentStore = 'br';
     let currentPage = 'recommendations';
@@ -338,7 +358,10 @@
     let quizData = {};
     let currentRecCategory = '';
     let currentQuizCategory = '';
+    let expandedGroups = {};
     let searchTimeout;
+    let recDateRange = 'all';
+    let quizDateRange = 'all';
 
     const CATEGORY_ICONS = {
       'Guitarristas': '🎸', 'Bateristas': '🥁', 'Tecladistas': '🎹', 'Cantores': '🎤',
@@ -349,51 +372,26 @@
       'Sound: Balanced': '⚖️', 'Sound: Energetic': '⚡'
     };
 
-    const QUIZ_ICONS = {
-      'retorno': '🎤', 'casual': '🎵', 'mixagem': '🎛️', 'audiovisual': '🎬', 'games': '🎮',
-      'guitarra': '🎸', 'baixo': '🎸', 'bateria': '🥁', 'teclado': '🎹', 'vocal': '🎤',
-      'masculino': '♂️', 'feminino': '♀️', 'equilibrado': '⚖️', 'graves': '🔊', 'energetico': '⚡',
-      'eletronica': '🎛️', 'rock': '🤘', 'hiphop': '🎤', 'classica': '🎻', 'pop': '🎵',
-      'gospel': '🙏', 'diversos': '🎶', 'edicao': '✂️', 'streaming': '📡', 'cinema': '🎥',
-      'animacao': '🎨', 'fps': '🎯', 'rpg': '⚔️', 'moba': '🏰'
+    const QUIZ_GROUPS = {
+      'retorno': { label: 'Retorno de Palco', icon: '🎤', subcats: [] },
+      'casual': { label: 'Uso Casual', icon: '🎵', subcats: [] },
+      'mixagem': { label: 'Mixagem e Produção', icon: '🎛️', subcats: [] },
+      'audiovisual': { label: 'Audiovisual', icon: '🎬', subcats: [] },
+      'games': { label: 'Games', icon: '🎮', subcats: [] }
     };
 
-    const QUIZ_LABELS = {
-      'retorno-guitarra-masculino': 'Retorno › Guitarra › Masculino',
-      'retorno-baixo-masculino': 'Retorno › Baixo › Masculino',
-      'retorno-bateria-masculino': 'Retorno › Bateria › Masculino',
-      'retorno-teclado-masculino': 'Retorno › Teclado › Masculino',
-      'retorno-vocal-masculino': 'Retorno › Vocal › Masculino',
-      'retorno-outros-masculino': 'Retorno › Outros › Masculino',
-      'retorno-guitarra-feminino': 'Retorno › Guitarra › Feminino',
-      'retorno-baixo-feminino': 'Retorno › Baixo › Feminino',
-      'retorno-bateria-feminino': 'Retorno › Bateria › Feminino',
-      'retorno-teclado-feminino': 'Retorno › Teclado › Feminino',
-      'retorno-vocal-feminino': 'Retorno › Vocal › Feminino',
-      'retorno-outros-feminino': 'Retorno › Outros › Feminino',
-      'casual-equilibrado': 'Casual › Equilibrado',
-      'casual-graves': 'Casual › Graves Potentes',
-      'casual-energetico': 'Casual › Energético',
-      'mixagem-eletronica': 'Mixagem › Eletrônica',
-      'mixagem-rock': 'Mixagem › Rock/Metal',
-      'mixagem-hiphop': 'Mixagem › Hip Hop',
-      'mixagem-classica': 'Mixagem › Clássica',
-      'mixagem-pop': 'Mixagem › Pop/MPB',
-      'mixagem-gospel': 'Mixagem › Gospel',
-      'mixagem-diversos': 'Mixagem › Diversos',
-      'audiovisual-edicao': 'Audiovisual › Edição',
-      'audiovisual-streaming': 'Audiovisual › Streaming',
-      'audiovisual-cinema': 'Audiovisual › Cinema',
-      'audiovisual-animacao': 'Audiovisual › Animação',
-      'games-fps': 'Games › FPS/Competitivo',
-      'games-rpg': 'Games › RPG/Aventura',
-      'games-moba': 'Games › MOBA/Estratégia',
-      'games-casual': 'Games › Casual'
-    };
-
-    const STORE_CATEGORIES = {
-      br: ['Guitarristas', 'Bateristas', 'Tecladistas', 'Cantores', 'Baixistas', 'Produtores', 'DJs', 'Gamers', 'Som: Graves Potentes', 'Som: Equilibrado', 'Som: Energético'],
-      global: ['Guitarists', 'Drummers', 'Keyboardists', 'Singers', 'Bassists', 'Producers', 'DJs', 'Gamers', 'Sound: Deep Bass', 'Sound: Balanced', 'Sound: Energetic']
+    const QUIZ_SUBCAT_LABELS = {
+      'guitarra-masculino': '🎸 Guitarra (M)', 'guitarra-feminino': '🎸 Guitarra (F)',
+      'baixo-masculino': '🎸 Baixo (M)', 'baixo-feminino': '🎸 Baixo (F)',
+      'bateria-masculino': '🥁 Bateria (M)', 'bateria-feminino': '🥁 Bateria (F)',
+      'teclado-masculino': '🎹 Teclado (M)', 'teclado-feminino': '🎹 Teclado (F)',
+      'vocal-masculino': '🎤 Vocal (M)', 'vocal-feminino': '🎤 Vocal (F)',
+      'outros-masculino': '🎶 Outros (M)', 'outros-feminino': '🎶 Outros (F)',
+      'equilibrado': '⚖️ Equilibrado', 'graves': '🔊 Graves Potentes', 'energetico': '⚡ Energético',
+      'eletronica': '🎛️ Eletrônica', 'rock': '🤘 Rock/Metal', 'hiphop': '🎤 Hip Hop',
+      'classica': '🎻 Clássica', 'pop': '🎵 Pop/MPB', 'gospel': '🙏 Gospel', 'diversos': '🎶 Diversos',
+      'edicao': '✂️ Edição', 'streaming': '📡 Streaming', 'cinema': '🎥 Cinema', 'animacao': '🎨 Animação',
+      'fps': '🎯 FPS/Competitivo', 'rpg': '⚔️ RPG/Aventura', 'moba': '🏰 MOBA/Estratégia', 'casual': '🎮 Casual'
     };
 
     const QUIZ_CATEGORIES = [
@@ -408,7 +406,12 @@
       'games-fps', 'games-rpg', 'games-moba', 'games-casual'
     ];
 
-    // ==================== AUTH ====================
+    const STORE_CATEGORIES = {
+      br: ['Guitarristas', 'Bateristas', 'Tecladistas', 'Cantores', 'Baixistas', 'Produtores', 'DJs', 'Gamers', 'Som: Graves Potentes', 'Som: Equilibrado', 'Som: Energético'],
+      global: ['Guitarists', 'Drummers', 'Keyboardists', 'Singers', 'Bassists', 'Producers', 'DJs', 'Gamers', 'Sound: Deep Bass', 'Sound: Balanced', 'Sound: Energetic']
+    };
+
+    // Auth
     if (auth) { document.getElementById('loginOverlay').classList.add('hidden'); document.getElementById('app').classList.remove('hidden'); init(); }
 
     function login() {
@@ -422,7 +425,6 @@
 
     function logout() { localStorage.removeItem('kz_admin_auth'); location.reload(); }
 
-    // ==================== API ====================
     async function api(action, options = {}) {
       const res = await fetch(`/api/admin/admin?action=${action}&store=${currentStore}`, {
         ...options,
@@ -431,16 +433,14 @@
       return res.json();
     }
 
-    // ==================== INIT ====================
     async function init() {
       const [recs, quiz] = await Promise.all([api('recommendations'), api('quiz-data')]);
       recommendations = recs || {};
       quizData = quiz || {};
       renderRecCategories();
-      renderQuizCategories();
+      renderQuizGroups();
     }
 
-    // ==================== NAVIGATION ====================
     function switchStore(store) {
       currentStore = store;
       document.querySelectorAll('.store-switch button').forEach(btn => {
@@ -459,37 +459,30 @@
       currentPage = page;
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
       document.querySelectorAll('.editor-page').forEach(p => p.classList.remove('active'));
-      
-      const pageEl = document.getElementById(`page-${page}`);
-      if (pageEl) pageEl.classList.add('active');
-      
-      // Update nav active state
+      document.getElementById(`page-${page}`)?.classList.add('active');
       const navMap = { 'recommendations': 0, 'quiz': 1, 'stats-rec': 2, 'stats-quiz': 3 };
-      document.querySelectorAll('.nav-item')[navMap[page]]?.classList.add('active');
-      
-      // Update header
+      const navItem = document.querySelectorAll('.nav-item')[navMap[page]];
+      if (navItem) navItem.classList.add('active');
       const titles = {
-        'recommendations': ['Recomendações', 'Selecione uma categoria e gerencie os produtos recomendados'],
-        'quiz': ['Quiz', 'Configure os produtos exibidos em cada resultado do quiz'],
+        'recommendations': ['Recomendações', 'Selecione uma categoria para editar os produtos'],
+        'quiz': ['Quiz', 'Clique em uma categoria para expandir e editar'],
         'stats-rec': ['Estatísticas - Recomendações', 'Acompanhe o desempenho das recomendações'],
         'stats-quiz': ['Estatísticas - Quiz', 'Acompanhe o desempenho do quiz']
       };
       document.getElementById('pageTitle').textContent = titles[page][0];
       document.getElementById('pageDesc').textContent = titles[page][1];
-      
-      // Load stats if needed
       if (page === 'stats-rec') loadRecStats();
       if (page === 'stats-quiz') loadQuizStats();
     }
 
-    // ==================== RECOMMENDATIONS ====================
+    // Recommendations
     function renderRecCategories() {
       const cats = STORE_CATEGORIES[currentStore];
       const grid = document.getElementById('recCategoriesGrid');
       grid.innerHTML = cats.map(cat => {
         const products = recommendations[cat] || [];
         const icon = CATEGORY_ICONS[cat] || '📦';
-        const images = products.slice(0, 4).map(p => `<img src="${p.image || 'https://placehold.co/36/334155/64748b?text=?'}" alt="">`).join('');
+        const images = products.slice(0, 4).map(p => `<img src="${p.image || 'https://placehold.co/32/334155/64748b?text=?'}" alt="">`).join('');
         const more = products.length > 4 ? `<span class="more">+${products.length - 4}</span>` : '';
         return `
           <div class="category-card ${currentRecCategory === cat ? 'active' : ''}" onclick="selectRecCategory('${cat}')">
@@ -522,25 +515,19 @@
       } else {
         currentQuizCategory = '';
         document.getElementById('quizEditorPanel').classList.add('hidden');
-        renderQuizCategories();
+        renderQuizGroups();
       }
     }
 
     function renderRecProducts() {
       const list = document.getElementById('recProductList');
       const products = recommendations[currentRecCategory] || [];
-      if (!products.length) {
-        list.innerHTML = '<div class="empty-list"><div class="icon">📦</div>Nenhum produto selecionado</div>';
-        return;
-      }
+      if (!products.length) { list.innerHTML = '<div class="empty-list"><div class="icon">📦</div>Nenhum produto</div>'; return; }
       list.innerHTML = products.map(p => `
         <div class="product-item" draggable="true" data-handle="${p.handle}">
           <span class="drag-handle">☰</span>
-          <img src="${p.image || 'https://placehold.co/48/334155/64748b?text=?'}" alt="">
-          <div class="info">
-            <h4>${p.name}</h4>
-            <span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span>
-          </div>
+          <img src="${p.image || 'https://placehold.co/44/334155/64748b?text=?'}" alt="">
+          <div class="info"><h4>${p.name}</h4><span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span></div>
           <button class="remove-btn" onclick="removeRecProduct('${p.handle}')">✕</button>
         </div>
       `).join('');
@@ -563,36 +550,69 @@
       if (res.success) recommendations = res.data;
     }
 
-    // ==================== QUIZ ====================
-    function renderQuizCategories() {
-      const grid = document.getElementById('quizCategoriesGrid');
-      grid.innerHTML = QUIZ_CATEGORIES.map(cat => {
-        const products = quizData[cat] || [];
-        const label = QUIZ_LABELS[cat] || cat;
+    // Quiz Groups
+    function renderQuizGroups() {
+      // Build groups from categories
+      const groups = { retorno: [], casual: [], mixagem: [], audiovisual: [], games: [] };
+      QUIZ_CATEGORIES.forEach(cat => {
         const parts = cat.split('-');
-        const icon = QUIZ_ICONS[parts[1]] || QUIZ_ICONS[parts[0]] || '📦';
-        const images = products.slice(0, 4).map(p => `<img src="${p.image || 'https://placehold.co/36/334155/64748b?text=?'}" alt="">`).join('');
-        const more = products.length > 4 ? `<span class="more">+${products.length - 4}</span>` : '';
-        return `
-          <div class="category-card quiz ${currentQuizCategory === cat ? 'active' : ''}" onclick="selectQuizCategory('${cat}')">
-            <div class="cat-header">
-              <span class="cat-icon">${icon}</span>
-              <span class="cat-name">${label}</span>
-              <span class="cat-count">${products.length}</span>
+        const group = parts[0];
+        if (groups[group]) groups[group].push(cat);
+      });
+
+      const container = document.getElementById('quizGroupsContainer');
+      container.innerHTML = Object.entries(groups).map(([groupId, cats]) => {
+        const groupInfo = QUIZ_GROUPS[groupId];
+        const totalProducts = cats.reduce((sum, cat) => sum + (quizData[cat]?.length || 0), 0);
+        const isExpanded = expandedGroups[groupId];
+        
+        const subcatsHtml = cats.map(cat => {
+          const products = quizData[cat] || [];
+          const parts = cat.split('-');
+          const subKey = parts.slice(1).join('-');
+          const label = QUIZ_SUBCAT_LABELS[subKey] || subKey;
+          const images = products.slice(0, 3).map(p => `<img src="${p.image || 'https://placehold.co/28/334155/64748b?text=?'}" alt="">`).join('');
+          return `
+            <div class="quiz-subcat ${currentQuizCategory === cat ? 'active' : ''}" onclick="selectQuizCategory('${cat}')">
+              <div class="sub-header">
+                <span class="sub-name">${label}</span>
+                <span class="sub-count">${products.length}</span>
+              </div>
+              <div class="sub-products">${images}</div>
             </div>
-            <div class="cat-products">${images}${more}</div>
+          `;
+        }).join('');
+
+        return `
+          <div class="quiz-group ${isExpanded ? 'expanded' : ''}">
+            <div class="quiz-group-header" onclick="toggleQuizGroup('${groupId}')">
+              <span class="icon">${groupInfo.icon}</span>
+              <span class="title">${groupInfo.label}</span>
+              <span class="count">${totalProducts}</span>
+              <span class="arrow">▼</span>
+            </div>
+            <div class="quiz-group-content">
+              <div class="quiz-subcategories">${subcatsHtml}</div>
+            </div>
           </div>
         `;
       }).join('');
     }
 
+    function toggleQuizGroup(groupId) {
+      expandedGroups[groupId] = !expandedGroups[groupId];
+      renderQuizGroups();
+    }
+
     function selectQuizCategory(cat) {
       currentQuizCategory = cat;
-      renderQuizCategories();
+      renderQuizGroups();
       document.getElementById('quizEditorPanel').classList.remove('hidden');
       const parts = cat.split('-');
-      document.getElementById('quizEditorIcon').textContent = QUIZ_ICONS[parts[1]] || QUIZ_ICONS[parts[0]] || '📦';
-      document.getElementById('quizEditorTitle').textContent = QUIZ_LABELS[cat] || cat;
+      const subKey = parts.slice(1).join('-');
+      const label = QUIZ_SUBCAT_LABELS[subKey] || cat;
+      document.getElementById('quizEditorIcon').textContent = QUIZ_GROUPS[parts[0]]?.icon || '📦';
+      document.getElementById('quizEditorTitle').textContent = `${QUIZ_GROUPS[parts[0]]?.label} › ${label.replace(/^[^\s]+\s/, '')}`;
       renderQuizProducts();
       loadSearchResults('quiz');
     }
@@ -600,18 +620,12 @@
     function renderQuizProducts() {
       const list = document.getElementById('quizProductList');
       const products = quizData[currentQuizCategory] || [];
-      if (!products.length) {
-        list.innerHTML = '<div class="empty-list"><div class="icon">📦</div>Nenhum produto selecionado</div>';
-        return;
-      }
+      if (!products.length) { list.innerHTML = '<div class="empty-list"><div class="icon">📦</div>Nenhum produto</div>'; return; }
       list.innerHTML = products.map(p => `
         <div class="product-item" draggable="true" data-handle="${p.handle}">
           <span class="drag-handle">☰</span>
-          <img src="${p.image || 'https://placehold.co/48/334155/64748b?text=?'}" alt="">
-          <div class="info">
-            <h4>${p.name}</h4>
-            <span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span>
-          </div>
+          <img src="${p.image || 'https://placehold.co/44/334155/64748b?text=?'}" alt="">
+          <div class="info"><h4>${p.name}</h4><span>${p.currency || 'BRL'} ${parseFloat(p.price || 0).toFixed(2)}</span></div>
           <button class="remove-btn" onclick="removeQuizProduct('${p.handle}')">✕</button>
         </div>
       `).join('');
@@ -620,12 +634,12 @@
 
     async function addQuizProduct(product) {
       const res = await api('quiz-save', { method: 'POST', body: JSON.stringify({ category: currentQuizCategory, product }) });
-      if (res.success) { quizData = res.data; renderQuizProducts(); renderQuizCategories(); loadSearchResults('quiz'); }
+      if (res.success) { quizData = res.data; renderQuizProducts(); renderQuizGroups(); loadSearchResults('quiz'); }
     }
 
     async function removeQuizProduct(handle) {
       const res = await api(`quiz-remove&category=${currentQuizCategory}&handle=${encodeURIComponent(handle)}`, { method: 'DELETE' });
-      if (res.success) { quizData = res.data; renderQuizProducts(); renderQuizCategories(); loadSearchResults('quiz'); }
+      if (res.success) { quizData = res.data; renderQuizProducts(); renderQuizGroups(); loadSearchResults('quiz'); }
     }
 
     async function saveQuizOrder() {
@@ -635,80 +649,58 @@
     }
 
     async function seedQuizData() {
-      if (!confirm('Isso vai pré-popular o quiz com os produtos do código original. Continuar?')) return;
+      if (!confirm('Carregar produtos do código original?')) return;
       const btn = document.getElementById('seedBtn');
       btn.textContent = 'Carregando...';
       btn.disabled = true;
       try {
         const res = await api('quiz-seed', { method: 'POST' });
         if (res.success) {
-          alert(`Quiz pré-populado!\nProdutos encontrados: ${res.productsFound} de ${res.totalHandles}`);
+          alert(`Pronto! ${res.productsFound} de ${res.totalHandles} produtos.`);
           quizData = res.data;
-          renderQuizCategories();
-        } else {
-          alert('Erro: ' + (res.error || 'Desconhecido'));
-        }
-      } catch (e) {
-        alert('Erro de conexão: ' + e.message);
-      }
+          renderQuizGroups();
+        } else { alert('Erro: ' + (res.error || '?')); }
+      } catch (e) { alert('Erro: ' + e.message); }
       btn.textContent = 'Carregar';
       btn.disabled = false;
     }
 
-    // ==================== SEARCH ====================
-    function debounceSearch(type) {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => searchProducts(type), 300);
-    }
+    // Search
+    function debounceSearch(type) { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => searchProducts(type), 300); }
 
     async function searchProducts(type) {
       const input = document.getElementById(`${type}SearchInput`);
-      const search = input.value.trim();
-      loadSearchResults(type, search);
+      loadSearchResults(type, input.value.trim());
     }
 
     async function loadSearchResults(type, search = '') {
       const container = document.getElementById(`${type}SearchResults`);
       container.innerHTML = '<div class="empty-list"><div class="icon">⏳</div>Carregando...</div>';
-      
       const data = await api(`products&search=${encodeURIComponent(search)}`);
-      if (!data.nodes?.length) {
-        container.innerHTML = '<div class="empty-list"><div class="icon">🔍</div>Nenhum produto encontrado</div>';
-        return;
-      }
-      
+      if (!data.nodes?.length) { container.innerHTML = '<div class="empty-list"><div class="icon">🔍</div>Nenhum produto</div>'; return; }
       const selected = type === 'rec' ? (recommendations[currentRecCategory] || []) : (quizData[currentQuizCategory] || []);
-      
       container.innerHTML = data.nodes.map(p => {
         const isSelected = selected.some(s => s.handle === p.handle);
         const price = p.priceRangeV2?.minVariantPrice;
         const desc = (p.descriptionHtml || '').replace(/<[^>]*>/g, '').substring(0, 120);
-        const productData = JSON.stringify({
-          title: p.title, handle: p.handle, image: p.featuredImage?.url,
-          price: price?.amount, currency: price?.currencyCode,
-          variantId: p.variants?.nodes?.[0]?.id,
-          description: desc + (desc.length >= 120 ? '...' : '')
-        }).replace(/'/g, "&#39;");
+        const productData = JSON.stringify({ title: p.title, handle: p.handle, image: p.featuredImage?.url, price: price?.amount, currency: price?.currencyCode, variantId: p.variants?.nodes?.[0]?.id, description: desc + (desc.length >= 120 ? '...' : '') }).replace(/'/g, "&#39;");
         return `
           <div class="search-item">
-            <img src="${p.featuredImage?.url || 'https://placehold.co/40/334155/64748b?text=?'}" alt="">
-            <div class="info">
-              <h4>${p.title}</h4>
-              <span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span>
-            </div>
+            <img src="${p.featuredImage?.url || 'https://placehold.co/36/334155/64748b?text=?'}" alt="">
+            <div class="info"><h4>${p.title}</h4><span>${price?.currencyCode || 'BRL'} ${parseFloat(price?.amount || 0).toFixed(2)}</span></div>
             <button class="add-btn" ${isSelected ? 'disabled' : ''} onclick='${type === "rec" ? "addRecProduct" : "addQuizProduct"}(${productData})'>${isSelected ? '✓' : '+'}</button>
           </div>
         `;
       }).join('');
     }
 
-    // ==================== DRAG & DROP ====================
+    // Drag & Drop
     function setupDragDrop(listId, saveCallback) {
       const items = document.querySelectorAll(`#${listId} .product-item`);
       let draggedItem = null;
       items.forEach(item => {
-        item.addEventListener('dragstart', () => { draggedItem = item; item.classList.add('dragging'); });
-        item.addEventListener('dragend', () => { item.classList.remove('dragging'); saveCallback(); });
+        item.addEventListener('dragstart', () => { draggedItem = item; item.style.opacity = '0.5'; });
+        item.addEventListener('dragend', () => { item.style.opacity = '1'; saveCallback(); });
         item.addEventListener('dragover', e => {
           e.preventDefault();
           if (draggedItem && draggedItem !== item) {
@@ -721,9 +713,39 @@
       });
     }
 
-    // ==================== STATS ====================
+    // Date Filters
+    function getDateRange(range) {
+      const today = new Date();
+      const fmt = d => d.toISOString().split('T')[0];
+      if (range === 'today') return { from: fmt(today), to: fmt(today) };
+      if (range === 'yesterday') { const y = new Date(today); y.setDate(y.getDate() - 1); return { from: fmt(y), to: fmt(y) }; }
+      if (range === '7days') { const d = new Date(today); d.setDate(d.getDate() - 6); return { from: fmt(d), to: fmt(today) }; }
+      if (range === '30days') { const d = new Date(today); d.setDate(d.getDate() - 29); return { from: fmt(d), to: fmt(today) }; }
+      return null;
+    }
+
+    function setDateFilter(type, range) {
+      const filters = document.getElementById(`${type}DateFilters`);
+      filters.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
+      if (range !== 'custom') {
+        filters.querySelector(`[data-range="${range}"]`)?.classList.add('active');
+      }
+      if (type === 'rec') { recDateRange = range; loadRecStats(); }
+      else { quizDateRange = range; loadQuizStats(); }
+    }
+
+    // Stats
     async function loadRecStats() {
-      const stats = await api('stats');
+      let params = '';
+      if (recDateRange === 'custom') {
+        const from = document.getElementById('recDateFrom').value;
+        const to = document.getElementById('recDateTo').value;
+        if (from && to) params = `&from=${from}&to=${to}`;
+      } else if (recDateRange !== 'all') {
+        const range = getDateRange(recDateRange);
+        if (range) params = `&from=${range.from}&to=${range.to}`;
+      }
+      const stats = await api('stats' + params);
       const grid = document.getElementById('recStatsGrid');
       const rate = stats.clicks > 0 ? ((stats.addToCart / stats.clicks) * 100).toFixed(1) : '0';
       grid.innerHTML = `
@@ -732,38 +754,41 @@
         <div class="stat-card"><div class="stat-icon">🛒</div><div class="stat-value">${(stats.addToCart || 0).toLocaleString()}</div><div class="stat-label">Add to Cart</div></div>
         <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">${rate}%</div><div class="stat-label">Conversão</div></div>
       `;
-      
       const tbody = document.getElementById('recStatsTable');
       if (stats.products?.length) {
         tbody.innerHTML = stats.products.slice(0, 15).map(p => {
           const pRate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
-          return `<tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-blue">${p.clicks}</span></td><td><span class="badge badge-green">${p.addToCart}</span></td><td><span class="badge badge-purple">${pRate}%</span></td></tr>`;
+          return `<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-blue">${p.clicks}</span></td><td><span class="badge badge-green">${p.addToCart}</span></td><td><span class="badge badge-purple">${pRate}%</span></td></tr>`;
         }).join('');
-      } else {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:2rem;">Nenhum dado ainda</td></tr>';
-      }
+      } else { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:1.5rem;">Sem dados</td></tr>'; }
     }
 
     async function loadQuizStats() {
-      const stats = await api('quiz-stats');
+      let params = '';
+      if (quizDateRange === 'custom') {
+        const from = document.getElementById('quizDateFrom').value;
+        const to = document.getElementById('quizDateTo').value;
+        if (from && to) params = `&from=${from}&to=${to}`;
+      } else if (quizDateRange !== 'all') {
+        const range = getDateRange(quizDateRange);
+        if (range) params = `&from=${range.from}&to=${range.to}`;
+      }
+      const stats = await api('quiz-stats' + params);
       const grid = document.getElementById('quizStatsGrid');
       const totalAtc = stats.products?.reduce((sum, p) => sum + p.addToCart, 0) || 0;
       grid.innerHTML = `
-        <div class="stat-card quiz"><div class="stat-icon">🚀</div><div class="stat-value">${(stats.starts || 0).toLocaleString()}</div><div class="stat-label">Quiz Iniciados</div></div>
+        <div class="stat-card quiz"><div class="stat-icon">🚀</div><div class="stat-value">${(stats.starts || 0).toLocaleString()}</div><div class="stat-label">Iniciados</div></div>
         <div class="stat-card quiz"><div class="stat-icon">✅</div><div class="stat-value">${(stats.completions || 0).toLocaleString()}</div><div class="stat-label">Completados</div></div>
         <div class="stat-card quiz"><div class="stat-icon">📈</div><div class="stat-value">${stats.completionRate || '0'}%</div><div class="stat-label">Taxa Conclusão</div></div>
         <div class="stat-card quiz"><div class="stat-icon">🛒</div><div class="stat-value">${totalAtc.toLocaleString()}</div><div class="stat-label">Add to Cart</div></div>
       `;
-      
       const tbody = document.getElementById('quizStatsTable');
       if (stats.products?.length) {
         tbody.innerHTML = stats.products.slice(0, 15).map(p => {
           const pRate = p.clicks > 0 ? ((p.addToCart / p.clicks) * 100).toFixed(0) : '0';
-          return `<tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-blue">${p.clicks}</span></td><td><span class="badge badge-green">${p.addToCart}</span></td><td><span class="badge badge-purple">${pRate}%</span></td></tr>`;
+          return `<tr><td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td><td><span class="badge badge-blue">${p.clicks}</span></td><td><span class="badge badge-green">${p.addToCart}</span></td><td><span class="badge badge-purple">${pRate}%</span></td></tr>`;
         }).join('');
-      } else {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:2rem;">Nenhum dado ainda</td></tr>';
-      }
+      } else { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:1.5rem;">Sem dados</td></tr>'; }
     }
   </script>
 </body>
