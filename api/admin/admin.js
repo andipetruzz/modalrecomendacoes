@@ -10,6 +10,17 @@ try {
   console.error('Redis init error:', e.message);
 }
 
+// Gera array de datas entre from e to (formato YYYY-MM-DD)
+function getDateRange(from, to) {
+  const dates = [];
+  const start = new Date(from);
+  const end = new Date(to);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  return dates;
+}
+
 // Configuração das lojas
 const STORES = {
   br: {
@@ -267,9 +278,64 @@ export default async function handler(req) {
       });
     }
 
-    // GET ?action=stats - Estatísticas
+    // GET ?action=stats - Estatísticas (com filtro de data opcional)
+    // Params: from=YYYY-MM-DD, to=YYYY-MM-DD
     if (action === 'stats') {
       const prefix = config.statsPrefix;
+      const from = url.searchParams.get('from');
+      const to = url.searchParams.get('to');
+      
+      // Se tem filtro de data, busca dados diários
+      if (from && to) {
+        const dates = getDateRange(from, to);
+        let views = 0, clicks = 0, addToCart = 0;
+        const productClicksAgg = {};
+        const productAtcAgg = {};
+        
+        // Busca dados de cada dia
+        for (const date of dates) {
+          const dailyPrefix = `${prefix}:daily:${date}`;
+          const [dViews, dClicks, dAtc, dProductClicks, dProductAtc] = await Promise.all([
+            redis.get(`${dailyPrefix}:views`),
+            redis.get(`${dailyPrefix}:clicks`),
+            redis.get(`${dailyPrefix}:add_to_cart`),
+            redis.hgetall(`${dailyPrefix}:product_clicks`),
+            redis.hgetall(`${dailyPrefix}:product_atc`),
+          ]);
+          
+          views += parseInt(dViews) || 0;
+          clicks += parseInt(dClicks) || 0;
+          addToCart += parseInt(dAtc) || 0;
+          
+          // Agrega cliques por produto
+          if (dProductClicks) {
+            for (const [handle, count] of Object.entries(dProductClicks)) {
+              productClicksAgg[handle] = (productClicksAgg[handle] || 0) + (parseInt(count) || 0);
+            }
+          }
+          if (dProductAtc) {
+            for (const [handle, count] of Object.entries(dProductAtc)) {
+              productAtcAgg[handle] = (productAtcAgg[handle] || 0) + (parseInt(count) || 0);
+            }
+          }
+        }
+        
+        // Busca títulos (são globais, não por dia)
+        const titlesObj = await redis.hgetall(`${prefix}:product_titles`) || {};
+        
+        const products = Object.entries(productClicksAgg).map(([handle, clickCount]) => ({
+          handle,
+          title: titlesObj[handle] || handle,
+          clicks: clickCount,
+          addToCart: productAtcAgg[handle] || 0,
+        })).sort((a, b) => b.clicks - a.clicks);
+
+        return new Response(JSON.stringify({ views, clicks, addToCart, products }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Sem filtro: retorna total geral
       const [views, clicks, addToCart, productClicks, productAtc, productTitles] = await Promise.all([
         redis.get(`${prefix}:views`),
         redis.get(`${prefix}:clicks`),
@@ -386,9 +452,60 @@ export default async function handler(req) {
       });
     }
 
-    // GET ?action=quiz-stats - Estatísticas do quiz
+    // GET ?action=quiz-stats - Estatísticas do quiz (com filtro de data opcional)
     if (action === 'quiz-stats') {
       const prefix = config.statsPrefix;
+      const from = url.searchParams.get('from');
+      const to = url.searchParams.get('to');
+      
+      // Se tem filtro de data, busca dados diários
+      if (from && to) {
+        const dates = getDateRange(from, to);
+        let starts = 0, completions = 0;
+        const productClicksAgg = {};
+        const productAtcAgg = {};
+        
+        for (const date of dates) {
+          const dailyPrefix = `${prefix}:daily:${date}`;
+          const [dStarts, dCompletions, dProductClicks, dProductAtc] = await Promise.all([
+            redis.get(`${dailyPrefix}:quiz:starts`),
+            redis.get(`${dailyPrefix}:quiz:completions`),
+            redis.hgetall(`${dailyPrefix}:quiz:product_clicks`),
+            redis.hgetall(`${dailyPrefix}:quiz:product_atc`),
+          ]);
+          
+          starts += parseInt(dStarts) || 0;
+          completions += parseInt(dCompletions) || 0;
+          
+          if (dProductClicks) {
+            for (const [handle, count] of Object.entries(dProductClicks)) {
+              productClicksAgg[handle] = (productClicksAgg[handle] || 0) + (parseInt(count) || 0);
+            }
+          }
+          if (dProductAtc) {
+            for (const [handle, count] of Object.entries(dProductAtc)) {
+              productAtcAgg[handle] = (productAtcAgg[handle] || 0) + (parseInt(count) || 0);
+            }
+          }
+        }
+        
+        const titlesObj = await redis.hgetall(`${prefix}:quiz:product_titles`) || {};
+        
+        const products = Object.entries(productClicksAgg).map(([handle, clickCount]) => ({
+          handle,
+          title: titlesObj[handle] || handle,
+          clicks: clickCount,
+          addToCart: productAtcAgg[handle] || 0,
+        })).sort((a, b) => b.clicks - a.clicks);
+
+        const completionRate = starts > 0 ? ((completions / starts) * 100).toFixed(1) : '0';
+
+        return new Response(JSON.stringify({ starts, completions, completionRate, products }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Sem filtro: retorna total geral
       const [starts, completions, productClicks, productAtc, productTitles] = await Promise.all([
         redis.get(`${prefix}:quiz:starts`),
         redis.get(`${prefix}:quiz:completions`),
