@@ -533,12 +533,15 @@ export default async function handler(req) {
         
         const titlesObj = await redis.hgetall(`${prefix}:quiz:product_titles`) || {};
         
-        const products = Object.entries(productClicksAgg).map(([handle, clickCount]) => ({
+        // Combina handles de clicks e atc para não perder produtos que só tiveram ATC
+        const allHandles = new Set([...Object.keys(productClicksAgg), ...Object.keys(productAtcAgg)]);
+        
+        const products = Array.from(allHandles).map(handle => ({
           handle,
           title: titlesObj[handle] || handle,
-          clicks: clickCount,
+          clicks: productClicksAgg[handle] || 0,
           addToCart: productAtcAgg[handle] || 0,
-        })).sort((a, b) => b.clicks - a.clicks);
+        })).sort((a, b) => (b.clicks + b.addToCart) - (a.clicks + a.addToCart));
 
         const completionRate = starts > 0 ? ((completions / starts) * 100).toFixed(1) : '0';
 
@@ -560,12 +563,15 @@ export default async function handler(req) {
       const atcObj = productAtc || {};
       const titlesObj = productTitles || {};
 
-      const products = Object.entries(clicksObj).map(([handle, clickCount]) => ({
+      // Combina handles de clicks e atc para não perder produtos que só tiveram ATC
+      const allHandles = new Set([...Object.keys(clicksObj), ...Object.keys(atcObj)]);
+      
+      const products = Array.from(allHandles).map(handle => ({
         handle,
         title: titlesObj[handle] || handle,
-        clicks: parseInt(clickCount) || 0,
+        clicks: parseInt(clicksObj[handle]) || 0,
         addToCart: parseInt(atcObj[handle]) || 0,
-      })).sort((a, b) => b.clicks - a.clicks);
+      })).sort((a, b) => (b.clicks + b.addToCart) - (a.clicks + a.addToCart));
 
       const startsNum = parseInt(starts) || 0;
       const completionsNum = parseInt(completions) || 0;
