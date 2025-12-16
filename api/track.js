@@ -5,33 +5,21 @@ const redis = new Redis({
   token: process.env.KV_REST_API_TOKEN,
 });
 
-// Domínios permitidos (suas lojas)
-const ALLOWED_ORIGINS = [
-  'https://kzmusicstore.com.br',
-  'https://www.kzmusicstore.com.br',
-  'https://kzmusicstore.com',
-  'https://www.kzmusicstore.com',
-  /^https:\/\/[a-z0-9-]+\.myshopify\.com$/,
-];
-
 const VALID_EVENTS = ['view', 'click', 'add_to_cart', 'quiz_start', 'quiz_complete', 'quiz_click', 'quiz_atc'];
 const VALID_STORES = ['br', 'global'];
 
-function isOriginAllowed(origin) {
-  if (!origin) return false;
-  return ALLOWED_ORIGINS.some(allowed => {
-    if (typeof allowed === 'string') return allowed === origin;
-    if (allowed instanceof RegExp) return allowed.test(origin);
-    return false;
-  });
-}
-
 function getCorsHeaders(origin) {
-  const allowedOrigin = isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0];
+  // Aceita qualquer origem das lojas KZ
+  const allowed = origin && (
+    origin.includes('kzmusicstore.com') || 
+    origin.includes('myshopify.com') ||
+    origin.includes('localhost')
+  );
+  
   return {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Origin': allowed ? origin : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 }
@@ -52,13 +40,6 @@ export default async function handler(req) {
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), { 
       status: 405, 
-      headers: corsHeaders 
-    });
-  }
-
-  if (!isOriginAllowed(origin)) {
-    return new Response(JSON.stringify({ error: 'Forbidden' }), { 
-      status: 403, 
       headers: corsHeaders 
     });
   }
