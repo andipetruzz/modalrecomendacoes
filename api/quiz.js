@@ -11,18 +11,31 @@ const STORE_KEYS = {
   global: 'kz:quiz:global'
 };
 
+// Domínios permitidos
+const ALLOWED_DOMAINS = [
+  'kzmusicstore.com.br',
+  'www.kzmusicstore.com.br',
+  'kzmusicstore.com',
+  'www.kzmusicstore.com',
+];
+
+function isOriginAllowed(origin) {
+  if (!origin) return true; // Permite requests diretas (sem origin)
+  try {
+    const url = new URL(origin);
+    return ALLOWED_DOMAINS.includes(url.hostname) || 
+           url.hostname.endsWith('.myshopify.com');
+  } catch {
+    return false;
+  }
+}
+
 function getCorsHeaders(origin) {
-  // Aceita qualquer origem das lojas KZ
-  const allowed = origin && (
-    origin.includes('kzmusicstore.com') || 
-    origin.includes('myshopify.com') ||
-    origin.includes('localhost')
-  );
-  
+  const allowed = isOriginAllowed(origin);
   return {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': allowed ? origin : '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Origin': allowed ? (origin || '*') : 'https://kzmusicstore.com',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Cache-Control': 'public, s-maxage=3600, max-age=3600, stale-while-revalidate=86400',
   };
