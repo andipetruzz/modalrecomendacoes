@@ -6,12 +6,11 @@ const redis = new Redis({
 });
 
 // Domínios permitidos
-const ALLOWED_ORIGINS = [
-  'https://kzmusicstore.com.br',
-  'https://www.kzmusicstore.com.br',
-  'https://kzmusicstore.com',
-  'https://www.kzmusicstore.com',
-  /^https:\/\/[a-z0-9-]+\.myshopify\.com$/,
+const ALLOWED_DOMAINS = [
+  'kzmusicstore.com.br',
+  'www.kzmusicstore.com.br',
+  'kzmusicstore.com',
+  'www.kzmusicstore.com',
 ];
 
 // Chaves Redis por loja
@@ -21,23 +20,23 @@ const STORE_KEYS = {
 };
 
 function isOriginAllowed(origin) {
-  // Se não tem origin (navegação direta, server-side, etc), permite
-  if (!origin) return true;
-  return ALLOWED_ORIGINS.some(allowed => {
-    if (typeof allowed === 'string') return allowed === origin;
-    if (allowed instanceof RegExp) return allowed.test(origin);
+  if (!origin) return true; // Permite requests diretas
+  try {
+    const url = new URL(origin);
+    return ALLOWED_DOMAINS.includes(url.hostname) || 
+           url.hostname.endsWith('.myshopify.com');
+  } catch {
     return false;
-  });
+  }
 }
 
 function getCorsHeaders(origin) {
-  const allowedOrigin = isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0];
+  const allowed = isOriginAllowed(origin);
   return {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Origin': allowed ? (origin || '*') : 'https://kzmusicstore.com',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
-    // Cache 24h no CDN e browser
     'Cache-Control': 'public, s-maxage=86400, max-age=86400, stale-while-revalidate=604800',
   };
 }
