@@ -487,6 +487,10 @@
       closeEditor('rec');
       closeEditor('quiz');
       init();
+      
+      // Recarrega stats se estiver na página de estatísticas
+      if (currentPage === 'stats-rec') loadRecStats();
+      if (currentPage === 'stats-quiz') loadQuizStats();
     }
 
     function showPage(page) {
