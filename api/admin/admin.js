@@ -208,10 +208,13 @@ export default async function handler(req) {
       });
     }
 
-    // GET ?action=products - Busca produtos da Shopify
+    // GET ?action=products - Busca produtos da Shopify (apenas ATIVOS)
     if (action === 'products') {
       const search = url.searchParams.get('search') || '';
       const cursor = url.searchParams.get('cursor') || null;
+      
+      // Adiciona filtro de status:active na query
+      const searchQuery = search ? `${search} AND status:active` : 'status:active';
       
       const query = `
         query ($first: Int!, $query: String, $cursor: String) {
@@ -221,6 +224,7 @@ export default async function handler(req) {
               id
               title
               handle
+              status
               descriptionHtml
               featuredImage { url }
               priceRangeV2 { minVariantPrice { amount, currencyCode } }
@@ -232,7 +236,7 @@ export default async function handler(req) {
       
       const { data, errors } = await shopifyGraphQL(store, query, {
         first: 20,
-        query: search || null,
+        query: searchQuery,
         cursor,
       });
 
@@ -316,6 +320,68 @@ export default async function handler(req) {
       }
 
       return new Response(JSON.stringify({ success: true, data }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // POST ?action=cleanup - Remove produtos inativos das recomendações e quiz
+    if (action === 'cleanup' && req.method === 'POST') {
+      const recData = await redis.get(config.redisKey) || {};
+      const quizData = await redis.get(config.quizKey) || {};
+      
+      // Coleta todos os handles únicos
+      const allHandles = new Set();
+      Object.values(recData).forEach(products => products.forEach(p => allHandles.add(p.handle)));
+      Object.values(quizData).forEach(products => products.forEach(p => allHandles.add(p.handle)));
+      
+      // Verifica status de cada produto
+      const activeHandles = new Set();
+      for (const handle of allHandles) {
+        const query = `
+          query ($handle: String!) {
+            productByHandle(handle: $handle) {
+              handle
+              status
+            }
+          }
+        `;
+        try {
+          const { data } = await shopifyGraphQL(store, query, { handle });
+          if (data?.productByHandle?.status === 'ACTIVE') {
+            activeHandles.add(handle);
+          }
+        } catch (e) {
+          console.error(`Failed to check product ${handle}:`, e.message);
+        }
+      }
+      
+      // Filtra recomendações - mantém apenas produtos ativos
+      let recRemoved = 0;
+      for (const category of Object.keys(recData)) {
+        const before = recData[category].length;
+        recData[category] = recData[category].filter(p => activeHandles.has(p.handle));
+        recRemoved += before - recData[category].length;
+      }
+      await redis.set(config.redisKey, recData);
+      
+      // Filtra quiz - mantém apenas produtos ativos
+      let quizRemoved = 0;
+      for (const category of Object.keys(quizData)) {
+        const before = quizData[category].length;
+        quizData[category] = quizData[category].filter(p => activeHandles.has(p.handle));
+        quizRemoved += before - quizData[category].length;
+      }
+      await redis.set(config.quizKey, quizData);
+      
+      return new Response(JSON.stringify({ 
+        success: true, 
+        totalProducts: allHandles.size,
+        activeProducts: activeHandles.size,
+        recRemoved,
+        quizRemoved,
+        recommendations: recData,
+        quiz: quizData
+      }), {
         headers: { 'Content-Type': 'application/json' },
       });
     }
@@ -678,7 +744,7 @@ export default async function handler(req) {
       // Busca produtos em lotes (Shopify limita a query)
       const productsMap = {};
       
-      // Busca cada produto individualmente pelo handle
+      // Busca cada produto individualmente pelo handle (só ATIVOS)
       for (const handle of allHandles) {
         const query = `
           query ($handle: String!) {
@@ -686,6 +752,7 @@ export default async function handler(req) {
               id
               title
               handle
+              status
               descriptionHtml
               featuredImage { url }
               priceRangeV2 { minVariantPrice { amount, currencyCode } }
@@ -696,7 +763,8 @@ export default async function handler(req) {
         
         try {
           const { data } = await shopifyGraphQL(store, query, { handle });
-          if (data?.productByHandle) {
+          // Só adiciona se produto existe E está ATIVO
+          if (data?.productByHandle && data.productByHandle.status === 'ACTIVE') {
             const p = data.productByHandle;
             // Limpa HTML e trunca descrição
             const cleanDesc = (p.descriptionHtml || '').replace(/<[^>]*>/g, '').substring(0, 120);
