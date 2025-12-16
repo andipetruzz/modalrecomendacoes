@@ -171,9 +171,58 @@ function checkAuth(req) {
   }
 }
 
+// Extrai IP do request
+function getClientIP(req) {
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+         req.headers.get('x-real-ip') ||
+         req.headers.get('cf-connecting-ip') ||
+         'unknown';
+}
+
+// Rate limiting para login: 5 tentativas por 15 minutos
+async function checkLoginRateLimit(ip) {
+  if (!redis) return true; // Se Redis falhar, permite
+  
+  const key = `ratelimit:admin:${ip}`;
+  try {
+    const current = await redis.incr(key);
+    
+    // Define TTL de 15 minutos na primeira request
+    if (current === 1) {
+      await redis.expire(key, 900); // 15 minutos
+    }
+    
+    return current <= 5; // Permite até 5 tentativas
+  } catch {
+    return true; // Se Redis falhar, permite
+  }
+}
+
+// Reseta rate limit após login bem sucedido
+async function resetLoginRateLimit(ip) {
+  if (!redis) return;
+  const key = `ratelimit:admin:${ip}`;
+  try {
+    await redis.del(key);
+  } catch {
+    // Ignora erro
+  }
+}
+
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204 });
+  }
+
+  const clientIP = getClientIP(req);
+
+  // Verifica rate limit ANTES de verificar auth
+  const rateLimitOk = await checkLoginRateLimit(clientIP);
+  if (!rateLimitOk) {
+    return new Response(JSON.stringify({ error: 'Too many login attempts. Try again in 15 minutes.' }), {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': '900' },
+    });
   }
 
   if (!checkAuth(req)) {
@@ -182,6 +231,9 @@ export default async function handler(req) {
       headers: { 'Content-Type': 'application/json', 'WWW-Authenticate': 'Basic' },
     });
   }
+
+  // Login bem sucedido - reseta rate limit
+  await resetLoginRateLimit(clientIP);
 
   const url = new URL(req.url);
   const action = url.searchParams.get('action');
