@@ -169,6 +169,15 @@
     .seed-section button { background: #000; color: #f59e0b; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
     .seed-section button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* Cleanup */
+    .cleanup-section { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem; }
+    .cleanup-section .icon { font-size: 1.75rem; }
+    .cleanup-section .text { flex: 1; }
+    .cleanup-section .text h4 { color: #fff; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.15rem; }
+    .cleanup-section .text p { color: rgba(255,255,255,0.8); font-size: 0.8rem; }
+    .cleanup-section button { background: #fff; color: #ef4444; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+    .cleanup-section button:disabled { opacity: 0.5; cursor: not-allowed; }
+
     @media (max-width: 800px) {
       .sidebar { display: none; }
     }
@@ -240,6 +249,14 @@
       <div class="main-content">
         <!-- Recommendations -->
         <div class="editor-page active" id="page-recommendations">
+          <div class="cleanup-section">
+            <span class="icon">🧹</span>
+            <div class="text">
+              <h4>Limpar Produtos Inativos</h4>
+              <p>Remove produtos em rascunho/arquivados das recomendações e quiz</p>
+            </div>
+            <button onclick="runCleanup(this)">Limpar</button>
+          </div>
           <div class="categories-grid" id="recCategoriesGrid"></div>
           <div class="editor-panel hidden" id="recEditorPanel">
             <div class="editor-panel-header">
@@ -707,6 +724,29 @@
         } else { alert('Erro: ' + (res.error || '?')); }
       } catch (e) { alert('Erro: ' + e.message); }
       btn.textContent = 'Carregar';
+      btn.disabled = false;
+    }
+
+    async function runCleanup(btn) {
+      if (!confirm('Remover produtos inativos/arquivados das recomendações e quiz?\n\nIsso pode levar alguns segundos...')) return;
+      btn.textContent = 'Limpando...';
+      btn.disabled = true;
+      try {
+        const res = await api('cleanup', { method: 'POST' });
+        if (res.success) {
+          const total = res.recRemoved + res.quizRemoved;
+          if (total > 0) {
+            alert(`✅ Limpeza concluída!\n\n${res.recRemoved} produto(s) removido(s) das recomendações\n${res.quizRemoved} produto(s) removido(s) do quiz\n\nTotal verificados: ${res.totalProducts}\nAtivos: ${res.activeProducts}`);
+          } else {
+            alert(`✅ Todos os ${res.totalProducts} produtos estão ativos!`);
+          }
+          recommendations = res.recommendations;
+          quizData = res.quiz;
+          renderRecCategories();
+          renderQuizGroups();
+        } else { alert('Erro: ' + (res.error || '?')); }
+      } catch (e) { alert('Erro: ' + e.message); }
+      btn.textContent = 'Limpar';
       btn.disabled = false;
     }
 
